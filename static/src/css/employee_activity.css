@@ -1,0 +1,75 @@
+a.create_cancel:hover{
+	color:black;
+}
+.openerp .add_line {
+          line-height: 26px; }
+
+
+.openerp  .oe_form_sheetbg {
+    border-bottom: 0;
+    padding: 10px;
+    height: 100%; 
+ }
+
+.oe_form_sheetbg .oe_form_sheet {
+  position: relative;
+  padding: 20px 15px 30px 15px;
+  border-top: 0;
+  border-bottom: 0;
+  height: 100%; 
+ }
+
+span.toggle_create {
+	  cursor:pointer;
+  	  -moz-transform: rotate(90deg);
+      -o-transform: rotate(90deg);
+      -webkit-transform: rotate(90deg);
+      transform: rotate(90deg);
+      -webkit-transition-duration: 300ms;
+      -moz-transition-duration: 300ms;
+      -ms-transition-duration: 300ms;
+      -o-transition-duration: 300ms;
+      transition-duration: 300ms;      
+  }
+ span.toggle_match {
+	  cursor:pointer;
+  	  -moz-transform: rotate(0deg);
+      -o-transform: rotate(0deg);
+      -webkit-transform: rotate(0deg);
+      transform: rotate(0deg);
+      -webkit-transition-duration: 300ms;
+      -moz-transition-duration: 300ms;
+      -ms-transition-duration: 300ms;
+      -o-transition-duration: 300ms;
+      transition-duration: 300ms;      
+  } 
+  
+.openerp .create .oe_form > table:nth-child(2n+1) {
+  float: left;
+  clear:left;
+  }
+.openerp .create .oe_form > table:nth-child(2n) {
+  float: right;
+  clear:right;
+  }
+.openerp .create .oe_form > table {
+        height: 26px; }
+
+.openerp  .create .oe_form > table th {
+  font-weight: bold;
+  line-height: 26px;
+  padding-right: 8px;
+  min-width: 188px;
+  border-right: 1px solid #ddd;
+  white-space: nowrap;
+  width: 10%; }
+  
+.openerp  .create .oe_form > table td {
+width: 99%;
+padding-left: 8px; } 
+
+.openerp  .create .oe_form > table.add_line_container:nth-child(2n+1) {
+  width: 98%;
+  float: none;
+  margin: auto; }
+  

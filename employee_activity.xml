@@ -1,0 +1,151 @@
+<openerp>
+	<data>
+	   <menuitem id =  "menu_action_plan_parent"  name = "Action Plan"  groups = "pls.telecom_project_manager,pls.telecom_circle_head,pls.telecom_project_manager" />
+		<record id = "employee_activity_form" model = "ir.ui.view">
+            <field name="name">Employee Activity Line</field>
+            <field name="model">telecom.project</field>
+            <field name="inherit_id" ref="pls.telecom_project_form_view" />
+            <field name="arch" type="xml">
+				<xpath expr = "/form/sheet/notebook" postion ="inside">
+					<page string = "Activity Lines">
+						<field name = "employee_activity_lines" nolabel = "1" readonly="1">
+							<tree string = "Employee Activity Line">
+								<field name = "employee_id" />
+								<field name = "site_id" />
+								<field name = "site_name" />
+								<field name = "work_description" />
+								<field name = "activity_line" />
+								<field name = "state" />
+								<field name = "remarks" />
+								<field name = "reporting_time_site" />
+								<field name = "return_time_site" />
+							</tree>
+						</field>					
+					</page>
+				</xpath>
+            </field>
+		</record>
+		
+		<!-- Registering the javascript -->
+        <template id="assets_backend" name="employee_activity_assets" inherit_id="web.assets_backend">
+            <xpath expr="." position="inside">
+				<link rel="stylesheet" href="/employee_activity/static/src/css/employee_activity.css"/>
+                <script type="text/javascript" src="/employee_activity/static/src/js/employee_activity.js"/>
+            </xpath>
+        </template>
+
+		<!-- Creating a client action for the widget -->
+        <record id="action_plan_javascript" model="ir.actions.client">
+            <field name="name">Activitiy Plan</field>
+            <field name="tag">local.action_plan</field>
+        </record> 
+        
+       	<menuitem id = "menu_action_plan_childs" name = "Action Plan" parent = "menu_action_plan_parent" />
+      	<menuitem id = "menu_action_plan_subchild" name = "Action Plan" parent = "menu_action_plan_childs" action = "action_plan_javascript" />
+      	
+      	<!-- Employee Activity Lines view only by corporate ids -->
+		<record id = "view_employee_activity_corporate_tree" model="ir.ui.view">
+			<field name = "name">Employee Activity</field>
+            <field name="model">employee.activity.line</field>
+            <field name = "priority">1</field>
+            <field name="arch" type="xml">
+            	<tree string = "Employee Activities">
+            		<field name = "date" />
+            		<field name = "employee_id" />
+            		<field name = "project_id" />
+            		<field name = "state" />
+					<field name = "mobile_phone" />
+					<field name = "work_location"/>
+					<field name = "current_location" />
+					<field name = "site_id" />
+					<field name = "site_name" />
+					<field name = "work_description" />
+					<field name = "activity_line" />
+					<field name = "daily_allowance" />
+					<field name = "multiple_employees" widget = "many2many_tags" />
+					<field name = "remarks" />
+					<field name = "reporting_time_site" />
+					<field name = "return_time_site" />
+					<field name = "distance_site_location" />
+					<field name = "travelling_allowance" />
+					<field name = "local_conveyance" />
+					<field name = "lodging" />					
+            	</tree>
+            </field>
+        </record>      	
+      	
+      	<!-- Employee Activity Lines view only by corporate ids -->
+		<record id = "view_employee_activity_corporate" model="ir.ui.view">
+			<field name = "name">Employee Activity</field>
+            <field name="model">employee.activity.line</field>
+            <field name = "priority">1</field>
+            <field name="arch" type="xml">
+				<form string = "Attendance">
+					<header>
+						<field name="state" widget="statusbar" clickable = "1"  statusbar_visible="uncompleted,wip,completed,unattempted" />
+					</header>
+					<sheet>
+                        <div class="oe_title oe_left">
+                            <label for="employee_id" class="oe_edit_only" />
+                            <h1>
+								<field name = "employee_id" />
+                            </h1>
+                            <label for="job_id" class="oe_edit_only" />
+							<field name = "job_id" readonly="1"/>
+						</div>						
+                        <div class="oe_title">
+                            <label for="date" class="oe_edit_only" />
+                            <h1>
+								<field name = "date"  placeholder = "Date"/>
+                            </h1>
+						</div>
+                        <div class="oe_title oe_right">
+                            <label for="project_id" class="oe_edit_only" />
+                            <h1>
+								<field name = "project_id"  />
+                            </h1>
+						</div>						
+						<notebook>
+							<page string = "Details" >
+								<group>
+									<group>
+										<field name = "mobile_phone" readonly="1" string = "Mobile" />
+										<field name = "work_location" readonly="1"/>
+										<field name = "current_location" />
+										<field name = "site_id" />
+										<field name = "site_name" />
+										<field name = "work_description" />
+										<field name = "activity_line" />
+										<field name = "daily_allowance" />
+										<field name = "multiple_employees" widget = "many2many_tags" />
+									</group>
+									<group>
+										<field name = "remarks" />
+										<field name = "reporting_time_site" />
+										<field name = "return_time_site" />
+										<field name = "distance_site_location" />
+										<field name = "travelling_allowance" />
+										<field name = "local_conveyance" />
+										<field name = "lodging" />
+									</group>
+								</group>
+							</page>
+						</notebook>
+					</sheet>
+				</form>
+			</field>
+		</record>      	
+
+		
+		<record id = "action_employee_activity_line" model="ir.actions.act_window">
+            <field name="name">Employee Activities</field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">employee.activity.line</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+		</record>
+      	<menuitem id = "menu_employee_activity_childs" name = "Employee Activities" parent = "menu_action_plan_parent" />
+      	<menuitem id = "menu_employee_activity_subchilds" name = "Employee Activities" parent = "menu_employee_activity_childs" action = "action_employee_activity_line" />
+      	
+	</data>
+</openerp>

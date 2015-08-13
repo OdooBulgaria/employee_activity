@@ -1,0 +1,86 @@
+<templates xml:space="preserve">
+
+    <t t-name="form_create_field_employee_activity">
+        <table t-att-class='"create_field create_"+id'>
+	        <tr>
+	            <th><t t-esc="label"/></th>
+	            <td class="create_account_container" t-att-class='"create_"+id+"_container"'></td>
+	        </tr>
+        </table>                	
+    </t>
+
+    <t t-name = "activity_document">
+    	<div class = "oe_form_sheetbg">
+    		<div class = "oe_form_sheet oe_form_sheet_width">
+    			<h1>Employee Activities</h1>
+    		</div>
+    	</div>
+    </t>
+    
+    <t t-name = "table-caption">
+    	<h3><span><t t-esc = "name"></t></span><span style = "padding-left:15px;" id = "employee" class="toggle_match glyphicon glyphicon-play"></span></h3>
+    	
+    </t>
+    
+    <t t-name="activity_employee">
+        <table class = "table emloyee_table">
+			<tr>
+				<td>
+					<t t-if = "widget.project_id">
+						<button class = "oe_highlight create_new">Create</button>
+					</t>
+				</td>
+			</tr>			
+        </table>
+    </t>
+    
+	<t t-name = "activity_line">
+		<tbody class = "container">
+			<tr class="line">
+				<td>
+					<table class = "table">
+					    <tbody class="tbody_initial_line" >
+					        <tr class="initial_line">
+					            <td class="cell_action"><span class="toggle_match glyphicon glyphicon-play"></span></td>
+					            <td class="cell_job_id"><span t-esc="widget.line.job_id and widget.line.job_id[1] or ''"></span></td>
+					            <td class = "cell_project_id"><span t-esc="widget.line.project_id and widget.line.project_id[1]"></span></td>
+					            <td class = "cell_date"><span t-esc="widget.line.date"></span></td>
+					            <td class = "cell_base_location"><span t-esc="widget.line.work_location"></span></td>
+					            <td class = "cell_current_location"><span t-esc="widget.line.current_location or ''"></span></td>
+					            <td class = "cell_site_id"><span t-esc="widget.line.site_id or ''"></span></td>
+					            <td class = "cell_site_name"><span t-esc="widget.line.site_name or '' "></span></td>
+					            <td class = "cell_work_description"><span t-esc="widget.line.work_description and widget.line.work_description[1] "></span></td>
+					            <td class = "cell_activity_line"><span t-esc="widget.line.activity_line and widget.line.activity_line[1] "></span></td>
+				  	            <td class = "cell_state"><span t-esc="widget.line.state or ' '"></span></td>
+				   	            <td class = "cell_remarks"><span t-esc="widget.line.remarks or ' '"></span></td>
+					        </tr>
+					    </tbody>			
+					</table>		
+				</td>		
+			</tr>		
+		</tbody>
+	</t>
+	
+	<t t-name = "super_container">
+	   	<tr class = "form" style="display:none;">
+	   		<td>
+			   <div class="action_pane create">
+			       <div class="oe_form create_form">
+						
+			       </div>
+			   </div>                        						   		
+	   		</td>
+	   		<td>
+	   			<div class = "oe_right">
+	   				<button class="save_changes oe_highlight">Save</button>
+	   				<t t-if = "mode == 'create'" >
+	   					<a class="create_cancel" style = "padding:24px;line-height:4;font-size:xx-large" href = "javascript:void(0)">
+						X
+						</a>
+	   				</t>
+	   			</div>
+   				
+	   		</td>
+	   	</tr>		
+	</t>    
+</templates>
