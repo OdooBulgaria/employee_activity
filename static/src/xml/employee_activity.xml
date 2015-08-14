@@ -18,19 +18,18 @@
     </t>
     
     <t t-name = "table-caption">
-    	<h3><span><t t-esc = "name"></t></span><span style = "padding-left:15px;" id = "employee" class="toggle_match glyphicon glyphicon-play"></span></h3>
+    	<h3>
+	    	<span style = "padding-right:15px;" id = "employee" class="toggle_match_head glyphicon glyphicon-play"></span>
+	    	<span><t t-esc = "name"></t></span>
+			<t t-if = "project_id">
+				<span><a class="create_new oe_m2o_cm_button oe_e" draggable="false" href="#" tabindex="-1" style="display: inline;">/</a></span>
+			</t>
+    	</h3>
     	
     </t>
     
     <t t-name="activity_employee">
-        <table class = "table emloyee_table">
-			<tr>
-				<td>
-					<t t-if = "widget.project_id">
-						<button class = "oe_highlight create_new">Create</button>
-					</t>
-				</td>
-			</tr>			
+        <table class = "table employee_table">
         </table>
     </t>
     
@@ -41,18 +40,23 @@
 					<table class = "table">
 					    <tbody class="tbody_initial_line" >
 					        <tr class="initial_line">
-					            <td class="cell_action"><span class="toggle_match glyphicon glyphicon-play"></span></td>
-					            <td class="cell_job_id"><span t-esc="widget.line.job_id and widget.line.job_id[1] or ''"></span></td>
-					            <td class = "cell_project_id"><span t-esc="widget.line.project_id and widget.line.project_id[1]"></span></td>
-					            <td class = "cell_date"><span t-esc="widget.line.date"></span></td>
-					            <td class = "cell_base_location"><span t-esc="widget.line.work_location"></span></td>
-					            <td class = "cell_current_location"><span t-esc="widget.line.current_location or ''"></span></td>
-					            <td class = "cell_site_id"><span t-esc="widget.line.site_id or ''"></span></td>
-					            <td class = "cell_site_name"><span t-esc="widget.line.site_name or '' "></span></td>
-					            <td class = "cell_work_description"><span t-esc="widget.line.work_description and widget.line.work_description[1] "></span></td>
-					            <td class = "cell_activity_line"><span t-esc="widget.line.activity_line and widget.line.activity_line[1] "></span></td>
-				  	            <td class = "cell_state"><span t-esc="widget.line.state or ' '"></span></td>
-				   	            <td class = "cell_remarks"><span t-esc="widget.line.remarks or ' '"></span></td>
+								<td>
+									<t t-if = "glyphicon == 'match'">
+										<span class="toggle_match glyphicon glyphicon-play"></span>
+									</t>
+									<t t-if = "glyphicon == 'create'">
+										<span class="toggle_create glyphicon glyphicon-play"></span>
+									</t>									
+									<span><t t-esc="widget.line.name or  '/'"></t></span>									
+									<label>Date:</label>
+									<span><t t-esc="widget.line.date or  'Date Not defined'"></t></span>									
+									<label>Work Description:</label>
+									<span><t t-esc="widget.line.work_description and widget.line.work_description[1] or 'No Work Description Assigned'"></t></span>		
+									<label>Activity:</label>
+									<span><t t-esc="widget.line.activity_line and widget.line.activity_line[1] or 'No Activity Assigned'"></t></span>
+									<label>Remarks:</label>
+									<span><t t-esc="widget.line.remarks or '-'"></t></span>
+								</td>
 					        </tr>
 					    </tbody>			
 					</table>		

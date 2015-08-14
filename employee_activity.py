@@ -14,7 +14,15 @@ class employee_activity(models.Model):
     _name = "employee.activity.line"
     _description = "Employee Activity Line"
     
+    def name_get(self, cr, uid, ids, context=None):
+        res = super(employee_activity,self).name_get(cr,uid,ids,context)
+#         res = [(2, 'employee.activity.line,2')]
+        return res
+    
     def create(self,cr,uid,vals,context=None):
+        vals['name'] = self.pool.get('ir.sequence').get(cr, uid, 'employee.activity.line') or '/'
+        if not vals.get('date',False):
+            vals.update({'date':datetime.now(timezone('Asia/Kolkata'))})
         return super(employee_activity,self).create(cr,uid,vals,context)
     
     def list_employees_activity_data(self,cr,uid,context=None):
@@ -73,9 +81,10 @@ class employee_activity(models.Model):
             raise except_orm(_('Action Plan'),_('No Emmployees Present'))
         return res
     
+    name = fields.Char("Sequence",readonly="1")
     employee_id = fields.Many2one('hr.employee',string = "Employee",required=True)
     job_id = fields.Many2one(relation = 'hr.job',related = "employee_id.job_id",string = "Designation",store = True)
-    project_id = fields.Many2one('telecom.project' ,string = "Project" )
+    project_id = fields.Many2one('telecom.project' ,string = "Project",required=True )
     mobile_phone = fields.Char(related = "employee_id.mobile_phone" ,string = "Project")
     work_location = fields.Char(related = "employee_id.work_location",string = "Base Location")
     current_location = fields.Char('Current Location')
@@ -88,15 +97,15 @@ class employee_activity(models.Model):
                               ('uncompleted','Not Completed'),
                               ('wip',"WIP"),
                               ('unattempted',"Not Attempted"),
-                              ],string = "Status")
+                              ],string = "Status",default = "wip")
     remarks = fields.Text('Remarks')
     reporting_time_site = fields.Datetime('Reporting Time on Site')
     return_time_site = fields.Datetime('Returning Time from Site')
     distance_site_location = fields.Float("Distance Between Site & Location")
     local_conveyance = fields.Float('Local Conveyance (LC)')
-    travelling_allowance = fields.Float("Travelling Allowance Applied (TA)")
+    travelling_allowance = fields.Float("Traveling Allowance Applied (TA)")
     daily_allowance = fields.Float("Daily Allowance (DA)")
     lodging = fields.Float('Lodging')
     multiple_employees = fields.Many2many('hr.employee','ativity_line_hr_employee_rel','line_id','employee_id','Replicate Activity')
-    date = fields.Date("Date",default = datetime.now(timezone('Asia/Kolkata')).date())
+    date = fields.Datetime("Date",default = datetime.now(timezone('Asia/Kolkata')).date(),required=True)
     

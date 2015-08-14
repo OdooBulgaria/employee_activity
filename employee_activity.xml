@@ -1,6 +1,6 @@
 <openerp>
 	<data>
-	   <menuitem id =  "menu_action_plan_parent"  name = "Action Plan"  groups = "pls.telecom_project_manager,pls.telecom_circle_head,pls.telecom_project_manager" />
+	   <menuitem id =  "menu_action_plan_parent"  name = "Action Plan"  groups = "pls.telecom_corporate,pls.telecom_circle_head,pls.telecom_project_manager" />
 		<record id = "employee_activity_form" model = "ir.ui.view">
             <field name="name">Employee Activity Line</field>
             <field name="model">telecom.project</field>
@@ -10,15 +10,14 @@
 					<page string = "Activity Lines">
 						<field name = "employee_activity_lines" nolabel = "1" readonly="1">
 							<tree string = "Employee Activity Line">
+								<field name = "date" />
+								<field name = "name" /> 
 								<field name = "employee_id" />
 								<field name = "site_id" />
-								<field name = "site_name" />
 								<field name = "work_description" />
 								<field name = "activity_line" />
 								<field name = "state" />
 								<field name = "remarks" />
-								<field name = "reporting_time_site" />
-								<field name = "return_time_site" />
 							</tree>
 						</field>					
 					</page>
@@ -51,6 +50,7 @@
             <field name="arch" type="xml">
             	<tree string = "Employee Activities">
             		<field name = "date" />
+            		<field name = "name" />
             		<field name = "employee_id" />
             		<field name = "project_id" />
             		<field name = "state" />
@@ -94,15 +94,19 @@
 							<field name = "job_id" readonly="1"/>
 						</div>						
                         <div class="oe_title">
+                            <label for="project_id" class="oe_edit_only" />
+                            <h2>
+								<field name = "project_id"  />
+                            </h2>
                             <label for="date" class="oe_edit_only" />
-                            <h1>
+                            <h2>
 								<field name = "date"  placeholder = "Date"/>
-                            </h1>
+                            </h2>
 						</div>
                         <div class="oe_title oe_right">
-                            <label for="project_id" class="oe_edit_only" />
+                            <label for="name" class="oe_edit_only" />
                             <h1>
-								<field name = "project_id"  />
+								<field name = "name" nolabel="1"/>
                             </h1>
 						</div>						
 						<notebook>
@@ -114,8 +118,8 @@
 										<field name = "current_location" />
 										<field name = "site_id" />
 										<field name = "site_name" />
-										<field name = "work_description" />
-										<field name = "activity_line" />
+										<field name = "work_description" domain = "[('project_id','=',project_id)]" widget="selection"/>
+										<field name = "activity_line" doamin = "[('activity_line','=',work_description)]" widget="selection"/>
 										<field name = "daily_allowance" />
 										<field name = "multiple_employees" widget = "many2many_tags" />
 									</group>
@@ -144,7 +148,7 @@
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
 		</record>
-      	<menuitem id = "menu_employee_activity_childs" name = "Employee Activities" parent = "menu_action_plan_parent" />
+      	<menuitem id = "menu_employee_activity_childs" name = "Employee Activities" parent = "menu_action_plan_parent" sequence="0" groups = "pls.telecom_corporate"/>
       	<menuitem id = "menu_employee_activity_subchilds" name = "Employee Activities" parent = "menu_employee_activity_childs" action = "action_employee_activity_line" />
       	
 	</data>

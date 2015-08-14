@@ -7,8 +7,8 @@ openerp.employee_activity = function(instance, local) {
     	template:"activity_employee",
     	events:{
     		'click .create_new':"add_activity_line",
-    		'click .toggle_match.glyphicon.glyphicon-play':"show_activities",
-			'click .toggle_create.glyphicon.glyphicon-play':"hide_activities"	
+    		'click .toggle_match_head.glyphicon.glyphicon-play':"show_activities",
+			'click .toggle_create_head.glyphicon.glyphicon-play':"hide_activities"	
     	},
     	init:function(parent,employee_id,employee_name,project_id,activities){
     		this._super(parent);
@@ -27,6 +27,8 @@ openerp.employee_activity = function(instance, local) {
                 	'daily_allowance':"",
                 	'current_location':"",
                 	'local_conveyance':"",
+                	'work_description':false,
+                	'activity_line':false,
                 	'reporting_time_site':false,
                 	'return_time_site':false,
                 	'travelling_allowance':"",
@@ -36,25 +38,30 @@ openerp.employee_activity = function(instance, local) {
     	},
     	show_activities:function(event){
     		var self = this;
-    		$(event.srcElement).removeClass('toggle_match');
-    		$(event.srcElement).addClass('toggle_create');
+    		$(event.srcElement).removeClass('toggle_match_head');
+    		$(event.srcElement).addClass('toggle_create_head');
     		_.each(self.lines_object,function(line){
-    			line.$el.show();
+    			line.$el.show("300ms");
     		});
     	},
     	hide_activities:function(event){
     		var self = this;
-    		$(event.target).removeClass('toggle_create');
-    		$(event.target).addClass('toggle_match');    		
+    		$(event.target).removeClass('toggle_create_head');
+    		$(event.target).addClass('toggle_match_head');    		
     		_.each(self.lines_object,function(line){
-    			line.$el.hide();
+    			line.$el.hide("300ms");
     		});
     	},    	
-    	add_activity_line:function(){
+    	add_activity_line:function(event){
     		var self = this
+    		$(event.target).hide("300ms");
 			activity_line = new local.activity_line(self,self.employee_id,self.blank_line,self.employee_name,self.project_id,"create");
     		activity_line.prependTo(self.$el).done(activity_line.createFormWidgets());
     		activity_line.on("create_render_widget",this,function(id,activity_line){
+    			self.$el.find("a.create_new").show();
+    			if (!id){
+					return;
+    			}
     			activity_line.destroy();
     			var activity_line = new openerp.Model('employee.activity.line');
     			activity_line.call('read', [id,[]]).then(function (result) {
@@ -81,7 +88,8 @@ openerp.employee_activity = function(instance, local) {
     		var self = this;
     		this._super();
             var $document= $(QWeb.render("table-caption", {
-                "name": self.employee_name
+                "name": self.employee_name,
+                "project_id":self.project_id
             }));
             return $.when($document.prependTo(self.$el)).then(function(){
             	_.each(self.activities,function(line){
@@ -121,6 +129,7 @@ openerp.employee_activity = function(instance, local) {
 	                    	relation: "project.description.line",
 	                        string: _t("Work Description"),
 	                        type: "many2one",
+	                        domain:[['project_id','=',this.project_id[0]]],
 	                    },
 					},
     				site_name:{
@@ -302,7 +311,12 @@ openerp.employee_activity = function(instance, local) {
                 };
     	},
     	create_cancel:function(){
+    		this.trigger("create_render_widget",false,this);
     		this.destroy();
+    	},
+    	rerender_caption:function(line){
+    		var self = this;
+    		self.$el.find("tr.line").replaceWith($(QWeb.render("activity_line", {'widget':{'line':self.line},'glyphicon':'create'})))
     	},
     	save_changes:function(event){
     		var self = this
@@ -320,15 +334,15 @@ openerp.employee_activity = function(instance, local) {
                 	'return_time_site':self.line.return_time_site,
                 	'travelling_allowance':self.line.travelling_allowance,
                 	'lodging':self.line.lodging,
-                }]).then(function(){
-            	self.$el.find('.toggle_create').click();
+        		}]).then(function(){
+        			self.rerender_caption(self.line);
+        			self.$el.find('.toggle_create').click();
                 })    			
     		}
     	   if (self.mode == "create"){
-    		   console.log(self.line);
     		   activity_line.call('create', [{
-       			'activity_line':self.line.activity_line,
-       			'work_description':self.line.work_description,
+       			'activity_line':self.line.activity_line || false,
+       			'work_description':self.line.work_description || false,
        			'project_id':self.project_id[0],
        			'employee_id':self.employee_id,
        			'site_id':self.line.site_id,
@@ -466,7 +480,7 @@ openerp.employee_activity = function(instance, local) {
     
     	renderElement:function(){
     		var self = this;
-    		self.$el.append($(QWeb.render("activity_line", {'widget':{'line':self.line}})));
+    		self.$el.append($(QWeb.render("activity_line", {'widget':{'line':self.line},'glyphicon':'match'})));
     	},
     	open_line_form:function(event){
     		var self = this

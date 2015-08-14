@@ -1,3 +1,12 @@
+table.employee_table{
+	margin-bottom:-35px;
+}
+
+label{
+	padding-right:inherit;
+	padding-left:25px;
+	font-weight:bold;	
+}
 a.create_cancel:hover{
 	color:black;
 }
@@ -19,7 +28,7 @@ a.create_cancel:hover{
   height: 100%; 
  }
 
-span.toggle_create {
+.toggle_create,.toggle_create_head {
 	  cursor:pointer;
   	  -moz-transform: rotate(90deg);
       -o-transform: rotate(90deg);
@@ -31,7 +40,7 @@ span.toggle_create {
       -o-transition-duration: 300ms;
       transition-duration: 300ms;      
   }
- span.toggle_match {
+.toggle_match,.toggle_match_head{
 	  cursor:pointer;
   	  -moz-transform: rotate(0deg);
       -o-transform: rotate(0deg);
@@ -53,7 +62,7 @@ span.toggle_create {
   clear:right;
   }
 .openerp .create .oe_form > table {
-        height: 26px; }
+        height: 35px; }
 
 .openerp  .create .oe_form > table th {
   font-weight: bold;
@@ -66,7 +75,8 @@ span.toggle_create {
   
 .openerp  .create .oe_form > table td {
 width: 99%;
-padding-left: 8px; } 
+padding-left: 8px;
+ } 
 
 .openerp  .create .oe_form > table.add_line_container:nth-child(2n+1) {
   width: 98%;

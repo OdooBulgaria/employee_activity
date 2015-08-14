@@ -33,7 +33,8 @@
     'depends': ['base','pls','hr'],
     'data': [
              'employee_activity.xml',
-             'security/ir.model.access.csv'
+             'security/ir.model.access.csv',
+             'activity_sequence.xml'
              ],
     'demo': [],
     'test': [],
