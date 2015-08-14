@@ -34,7 +34,8 @@
     'data': [
              'employee_activity.xml',
              'security/ir.model.access.csv',
-             'activity_sequence.xml'
+             'activity_sequence.xml',
+             'dashboard.xml'
              ],
     'demo': [],
     'test': [],

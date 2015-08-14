@@ -1,0 +1,14 @@
+<openerp>
+	<data>
+		<record id = "action_employee_activity_line_dashboard" model="ir.actions.act_window">
+            <field name="name">Activity Dashboard</field>
+            <field name="res_model">employee.activity.line</field>
+            <field name = "context">{}</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree_activity_dashboard</field>
+         </record>
+
+		<menuitem id = "menuitem_employee_activity_line_dashboard"  parent = "pls.child_menu_dashboard" action = "action_employee_activity_line_dashboard" sequence = "3"/>
+
+	</data>
+</openerp>

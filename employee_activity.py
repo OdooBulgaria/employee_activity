@@ -14,6 +14,39 @@ class employee_activity(models.Model):
     _name = "employee.activity.line"
     _description = "Employee Activity Line"
     
+    # Called from javascript for activity dashboard to return the list of projects,employee names,circle
+    def list_caption(self,cr,uid,context=None):
+        # if corporate_ids then no restriction else child_of projects,employees and no circle
+        # if no circle then an indication will be sent from python to not render circle list 
+        # return the format [(1, u'Project1'), (2, u'Project2'), (3, u'Project3')] for each catoegory
+        corporate_ids = self.pool.get('attendance.attendance')._get_user_ids_group(cr,uid,'pls','telecom_corporate')
+        project = self.pool.get('telecom.project')
+        circle = self.pool.get('telecom.circle')
+        employee = self.pool.get('hr.employee')
+        
+        res = {}
+        project_ids = False
+        circle_ids = False
+        employee_ids = False
+        res.update({'project':project_ids,'circle':False,'employee':False})
+        # Get the employee ID of the user
+        employee_id =self.pool.get("attendance.line")._get_employee_id(cr,uid,context)
+        # if the employee a corporate person then search for all projects else return only those under hhim
+        if uid not in corporate_ids:
+            project_ids = project.search(cr,SUPERUSER_ID,[('project_manager','child_of',[employee_id],)], offset=0, limit=None, order=None, context=None, count=False)
+            employee_ids = employee.search(cr,SUPERUSER_ID,[('parent_id','child_of',employee_id)], offset=0, limit=None, order=None, context=None, count=False)
+        else:
+            project_ids = project.search(cr,SUPERUSER_ID,[], offset=0, limit=None, order=None, context=None, count=False)
+            circle_ids = project.search(cr,SUPERUSER_ID,[], offset=0, limit=None, order=None, context=None, count=False)
+            employee_ids = employee.search(cr,SUPERUSER_ID,[], offset=0, limit=None, order=None, context=None, count=False)
+        res.update({
+                    "project":project_ids and project.name_get(cr,uid,project_ids,context) or False,
+                    "circle": circle_ids and circle.name_get(cr,uid,circle_ids,context)or False,
+                    "employee":employee_ids and employee.name_get(cr,uid,employee_ids,context)     
+                    })
+            #{'project': [(1, u'Project1'), (2, u'Project2'), (3, u'Project3'), (4, u'New Project')]}
+        return res
+    
     def name_get(self, cr, uid, ids, context=None):
         res = super(employee_activity,self).name_get(cr,uid,ids,context)
 #         res = [(2, 'employee.activity.line,2')]

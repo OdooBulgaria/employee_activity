@@ -1,5 +1,53 @@
 <templates xml:space="preserve">
 
+    <t t-name="activity_dashboard">
+        <div class="oe_account_quickadd ui-toolbar" style="margin-bottom:0px;">
+			<t t-if = "info['project']" >
+	            <div class="oe_form_dropdown_section" > <!-- clear_group is so that all the three elements can be cleared at once -->
+		                <h4>Project :</h4> 
+		                <select class = "oe_select_project clear_group" id ="project_id">
+						</select>
+				</div>			
+			</t>
+			
+			<t t-if = "info['circle']" >
+	            <div class="oe_form_dropdown_section" >
+		                <h4>Circle :</h4> 
+		                <select class = "oe_select_circle clear_group" id="circle_id">
+						</select>
+				</div>			
+			</t>
+			
+			<t t-if = "info['employee']" >
+	            <div class="oe_form_dropdown_section">
+		                <h4>Employee Name :</h4> 
+		                <select class = "oe_select_employee_name clear_group" id = "employee_id">
+						</select>
+				</div>					
+			</t>			
+			
+            <div class="oe_form_dropdown_section">
+	                <h4>Status :</h4> 
+	                <select class = "oe_select_selection" id = "state">
+	                	<option></option>
+						<option value="completed">Completed</option>
+						<option value="uncompleted">Not Completed</option>
+						<option value="wip">WIP</option>
+						<option value="unattempted">Not Attempted</option>
+					</select>
+			</div>			
+            <div class = "oe_form_dropdown_section">   
+				<h4>From:</h4>
+				<input type = "date" class = "oe_datepicker_pls"  id = "date_from"/>
+       		</div>
+            <div class = "oe_form_dropdown_section">   
+				<h4>To:</h4>
+				<input type = "date" class = "oe_datepicker_pls"  id = "date_to"/>
+       		</div>       		
+        </div>
+    </t>
+
+
     <t t-name="form_create_field_employee_activity">
         <table t-att-class='"create_field create_"+id'>
 	        <tr>
