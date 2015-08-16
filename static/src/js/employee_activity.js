@@ -184,7 +184,7 @@ openerp.employee_activity = function(instance, local) {
     		var self = this
     		$(event.currentTarget).removeClass('create_new')  // Do not allow them have multiple create forms for a single employee
     		activity_line = new local.activity_line(self,self.employee_id,self.blank_line,self.employee_name,self.project_id,"create");
-    		activity_line.prependTo(self.$el).done(activity_line.createFormWidgets());
+    		activity_line.appendTo(self.$el).done(activity_line.createFormWidgets());
     		activity_line.on("create_render_widget",this,function(id,activity_line){
     			self.$el.find("button.name").addClass("create_new");
     			if (!id){
