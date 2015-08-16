@@ -3,6 +3,134 @@ openerp.employee_activity = function(instance, local) {
         _lt = instance.web._lt;
     var QWeb = instance.web.qweb;
 
+
+    // Activity Dashboard
+    instance.web.views.add('tree_activity_dashboard', 'instance.web.pls.filter_view_activities');
+    instance.web.pls.filter_view_activities = instance.web.ListView.extend({
+    	init:function(){
+            this._super.apply(this, arguments);
+            var self = this;
+            self.date_from = null;
+            self.date_to = null;
+            self.project_id = null;
+            self.circle_id = null;
+            self.employee_id = null;
+            self.state = "wip";
+            self.defs = [];
+            self.info = null;
+            self.d = $.Deferred();
+            self.project_list = [];
+            self.circle_list = [];
+            self.employee_list = [];
+            self.state = null;
+            self.render_element = $("");
+    	},
+    	start:function(){
+    		var self = this;
+            today_date = (new Date()).format("Y-m-d");
+            return this._super.apply(this, arguments).then(function(){
+            	var mod = new instance.web.Model("employee.activity.line", self.dataset.context, self.dataset.domain);
+                self.defs.push(mod.call("list_caption", []).then(function(result) {
+                	self.info = result
+                	self.d.resolve();
+                }));
+            });  		
+    	},
+    	
+    	do_search:function(domain, context, group_by){
+            var self = this;
+            this.last_domain = domain;
+            this.last_context = context;
+            this.last_group_by = group_by;
+            this.old_search = _.bind(this._super, this);
+            var o;
+            return $.when(self.d).done(function(){
+            	self.$el.parent().find("div.oe_account_quickadd.ui-toolbar").remove();
+            	self.render_element = 	$(QWeb.render("activity_dashboard", {info: self.info}))
+            	$.when(self.$el.parent().prepend(self.render_element)).then(function(){
+            			//onchange project,circle,employee
+            			self.$el.parent().find('select.clear_group,select.oe_select_selection').change(function() {
+                        		self[$(this)[0].id] = this.value === '' ? null : parseInt(this.value) || this.value
+                				return self.search_employee_activity_lines();
+            	            });
+            			//onchange from and to dates
+	                      self.$el.parent().find("input.oe_datepicker_pls").change(function(){
+	                    	if (this.value !== "") 
+	                    		self[$(this)[0].id] = this.value;
+	                		else self[$(this)[0].id] = null;
+	                    	return self.search_employee_activity_lines();
+	                      });
+            			//onchange selection fields
+	                      
+            				self.$el.parent().find('.clear_group').children().remove().end();
+	    	                self.$el.parent().find('.clear_group').append(new Option('', ''));
+	    	            	// rendering projects
+	    	                if (self.info.project){
+	    	                    for (var i = 0;i < self.info.project.length;i++){
+	    	                    	self.project_list.push(self.info.project[i][0])
+	    	                    	o = new Option(self.info.project[i][1], self.info.project[i][0]);
+	    	                        self.$el.parent().find('.oe_select_project').append(o);
+	    	                    }            	
+	    	                    self.$el.parent().find('.oe_select_project')[0].value = self.project_id;
+	    	                }
+	    	                //render circles
+	    	                if (self.info.circle){
+	    	                    for (var i = 0;i < self.info.circle.length;i++){
+	    	                    	self.circle_list.push(self.info.circle[i][0])
+	    	                    	console.log(self.circle_list)
+	    	                    	o = new Option(self.info.circle[i][1], self.info.circle[i][0]);
+	    	                        self.$el.parent().find('.oe_select_circle').append(o);
+	    	                    }            	
+	    	                    self.$el.parent().find('.oe_select_circle')[0].value = self.circle_id;
+	    	                }	    	     
+	    	                //rendering employees
+	    	                if (self.info.employee){
+	    	                    for (var i = 0;i < self.info.employee.length;i++){
+	    	                    	self.employee_list.push(self.info.employee[i][0])
+	    	                    	o = new Option(self.info.employee[i][1], self.info.employee[i][0]);
+	    	                        self.$el.parent().find('.oe_select_employee_name').append(o);
+	    	                    }            	
+	    	                    self.$el.parent().find('.oe_select_employee_name')[0].value = self.employee_id;
+	    	                }	    	                	    	                
+	    	            });            			
+            		});
+    		},
+
+    		search_employee_activity_lines: function() {
+            var self = this;
+            var domain = [];
+            if (self.info.project){
+                if (self.project_id !== null) domain.push(["project_id", "=", self.project_id]);
+                else{
+                	domain.push(["project_id", "in", self.project_list]);
+            	}            	
+            }
+            if (self.info.circle){
+                if (self.circle_id !== null) domain.push(["project_id.circle", "=", self.circle_id]);
+                else{
+                	domain.push(["project_id.circle", "in", self.circle_list]);
+            	}                        	
+            }
+            if (self.info.employee){
+                if (self.employee_id !== null) domain.push(["employee_id", "=", self.employee_id]);
+                else{
+                	domain.push(["employee_id", "in", self.employee_list]);
+            	}                        	
+            }
+            if (self.state !== null ) domain.push(['state','=',self.state]);
+            else{
+            	domain.push(['state','in',['completed','uncompleted','wip','unattempted']])
+            }
+            domain.push(['date','>=',self.date_from || today_date ]);
+        	domain.push(['date','<=',self.date_to || today_date ]);
+        	var compound_domain = new instance.web.CompoundDomain(self.last_domain, domain);
+            self.dataset.domain = compound_domain.eval();
+            return self.old_search(compound_domain, self.last_context, self.last_group_by);            	
+        },            	
+    });
+        
+    
+    
     local.activity_document = instance.Widget.extend({
     	template:"activity_employee",
     	events:{
@@ -15,24 +143,24 @@ openerp.employee_activity = function(instance, local) {
     		this.employee_id = employee_id;
     		this.employee_name = employee_name;
     		this.project_id = project_id;
+    		this.project_name = project_id[1];
     		this.activities = activities;
     		var defs = [];
     		this.lines_object = [];
     		this.blank_line = {
                    	'id':null,
-    				'site_id':"",
-                	'site_name':"",
-                	'remarks':"",
-                	'distance_site_location':"",
-                	'daily_allowance':"",
-                	'current_location':"",
-                	'local_conveyance':"",
+                	'site_id':false,
+                	'remarks':false,
+                	'distance_site_location':false,
+                	'daily_allowance':false,
+                	'current_location':false,
+                	'local_conveyance':false,
                 	'work_description':false,
                 	'activity_line':false,
                 	'reporting_time_site':false,
                 	'return_time_site':false,
-                	'travelling_allowance':"",
-                	'lodging':"",
+                	'travelling_allowance':false,
+                	'lodging':false,
                 	'state':"wip",
     		}
     	},
@@ -54,11 +182,11 @@ openerp.employee_activity = function(instance, local) {
     	},    	
     	add_activity_line:function(event){
     		var self = this
-    		$(event.target).hide("300ms");
-			activity_line = new local.activity_line(self,self.employee_id,self.blank_line,self.employee_name,self.project_id,"create");
+    		$(event.currentTarget).removeClass('create_new')  // Do not allow them have multiple create forms for a single employee
+    		activity_line = new local.activity_line(self,self.employee_id,self.blank_line,self.employee_name,self.project_id,"create");
     		activity_line.prependTo(self.$el).done(activity_line.createFormWidgets());
     		activity_line.on("create_render_widget",this,function(id,activity_line){
-    			self.$el.find("a.create_new").show();
+    			self.$el.find("button.name").addClass("create_new");
     			if (!id){
 					return;
     			}
@@ -87,9 +215,10 @@ openerp.employee_activity = function(instance, local) {
     	renderElement:function(){
     		var self = this;
     		this._super();
-            var $document= $(QWeb.render("table-caption", {
+    		var $document= $(QWeb.render("table-caption", {
                 "name": self.employee_name,
-                "project_id":self.project_id
+                "project_id":self.project_id,
+                "project_name":self.project_name,
             }));
             return $.when($document.prependTo(self.$el)).then(function(){
             	_.each(self.activities,function(line){
@@ -113,6 +242,7 @@ openerp.employee_activity = function(instance, local) {
     		this.mode = mode; // if mode = create then create widget
     		this.employee_id = employee_id;
     		this.project_id = project_id;
+    		this.project_name = project_id[1];
     		this.employee_name = employee_name
     		this.line = line
             this.$super_container = null;
@@ -124,7 +254,7 @@ openerp.employee_activity = function(instance, local) {
 	                    label: _t("Work Description"),
 	                    required: true,
 	                    tabindex: 10,
-	                    constructor: instance.web.form.FieldMany2One,
+	                    constructor: instance.web.form.FieldSelection,
 	                    field_properties: {
 	                    	relation: "project.description.line",
 	                        string: _t("Work Description"),
@@ -132,48 +262,23 @@ openerp.employee_activity = function(instance, local) {
 	                        domain:[['project_id','=',this.project_id[0]]],
 	                    },
 					},
-    				site_name:{
-                        id: "site_name",
-                        index: 1,
-                        corresponding_property: "site_name",
-                        label: _t("Site Name"),
-                        required: true,
-                        tabindex: 11,
-                        constructor: instance.web.form.FieldChar,
-                        field_properties: {
-                            string: _t("Site Name"),
-                            type: "char",
-                        },    					
-    				},
     				site_id:{
                         id: "site_id",
-                        index: 2,
+                        index: 1,
                         corresponding_property: "site_id",
-                        label: _t("Site ID"),
+                        label: _t("Site"),
                         required: true,
                         tabindex: 11,
-                        constructor: instance.web.form.FieldChar,
+                        constructor: instance.web.form.FieldSelection,
                         field_properties: {
-                            string: _t("Site ID"),
-                            type: "char",
-                        },    					
-    				},    				
-    				current_location:{
-                        id: "current_location",
-                        index: 3,
-                        corresponding_property: "current_location",
-                        label: _t("Current Location"),
-                        required: true,
-                        tabindex: 11,
-                        constructor: instance.web.form.FieldChar,
-                        field_properties: {
-                            string: _t("Current Location"),
-                            type: "char",
+                            relation:"project.site",
+                        	string: _t("Site"),
+                            type: "many2one",
                         },    					
     				},
     				state: {
                         id: "state",
-                        index: 4,
+                        index:4 ,
                         corresponding_property: "state",
                         label: _t("Status"),
                         required: true,
@@ -190,6 +295,19 @@ openerp.employee_activity = function(instance, local) {
                                        ],
                         },
                     },
+    				current_location:{
+                        id: "current_location",
+                        index: 3,
+                        corresponding_property: "current_location",
+                        label: _t("Current Location"),
+                        required: true,
+                        tabindex: 11,
+                        constructor: instance.web.form.FieldChar,
+                        field_properties: {
+                            string: _t("Current Location"),
+                            type: "char",
+                        },    					
+    				},
                     local_conveyance: {
                         id: "local_conveyance",
                         index: 5,
@@ -215,9 +333,24 @@ openerp.employee_activity = function(instance, local) {
 		                        relation: "activity.line",
 		                        string: _t("Activity"),
 		                        type: "many2one",
+		                        domain:[['activity_line.description_id','=',false]],
 		                    },
 						},
-    				remarks: {
+	    				site_code:{
+	                        id: "site_code",
+	                        index: 2,
+	                        corresponding_property: "site_code",
+	                        label: _t("Site ID"),
+	                        required: true,
+	                        tabindex: 11,
+	                        constructor: instance.web.form.FieldChar,
+	                        field_properties: {
+	                        	string: _t("Site ID"),
+	                            type: "char",
+	                    	},    					
+	    				},    				
+						
+					remarks: {
                         id: "remarks",
                         index: 7,
                         corresponding_property: "remarks",
@@ -323,8 +456,7 @@ openerp.employee_activity = function(instance, local) {
     		activity_line = new openerp.Model('employee.activity.line');
     		if (self.mode == "edit"){
         		activity_line.call('write', [self.line.id,{
-        			'site_id':self.line.site_id,
-                	'site_name':self.line.site_name,
+                	'site_id':self.line.site_id,
                 	'remarks':self.line.remarks,
                 	'distance_site_location':self.line.distance_site_location,
                 	'daily_allowance':self.line.daily_allowance,
@@ -346,7 +478,6 @@ openerp.employee_activity = function(instance, local) {
        			'project_id':self.project_id[0],
        			'employee_id':self.employee_id,
        			'site_id':self.line.site_id,
-            	'site_name':self.line.site_name,
             	'remarks':self.line.remarks,
             	'distance_site_location':self.line.distance_site_location,
             	'daily_allowance':self.line.daily_allowance,
@@ -388,7 +519,7 @@ openerp.employee_activity = function(instance, local) {
                     initial_mode: 'edit',
                     disable_autofocus: false,
                     $buttons: $(),
-                    $pager: $()
+                    $pager: $(),
             });
     
             field_manager.load_form(dataset);
@@ -404,6 +535,7 @@ openerp.employee_activity = function(instance, local) {
                 this.states = {};
                 this.views = {};
             };
+            
             var Default_node = function(field_name) {
                 this.tag = "field";
                 this.children = [];
@@ -438,10 +570,28 @@ openerp.employee_activity = function(instance, local) {
                 if (self.mode != "create" && (field.name == "work_description" || field.name == "activity_line")  ){
                 	field.modifiers.readonly = true;
                 }
+                
+                if (field.name == "site_code"){
+                	field.modifiers.readonly = true;
+                }
                 // on update : change the last created line
                 field.corresponding_property = field_data.corresponding_property;
                 
                 field.on("change:value",self,function(event){
+                	self.line[event.name] =  event.get("value");
+                	if (event.name == 'work_description'){
+                		self.activity_line_field.field.domain = [['activity_line.description_id','=',self.line.work_description]]
+                	}
+                	if (event.name == 'site_id'){
+                		model = new openerp.Model('project.site');
+                		if (event.get("value") && typeof(event.get("value")) == "number"){
+                    		self.line[event.name] = event.get("value"); //working
+                			model.call('read',[event.get("value"),['site_id']]).done(function(result){
+                				self.site_code_field.set_value(result.site_id || "Site Code Not Defined");
+                			});
+                		}
+                		
+                	}
                 	self.line[event.name] = event.get("value");
                 });
     

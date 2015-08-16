@@ -1,0 +1,47 @@
+<openerp>
+	<data>
+		<record id = "employee_activity_report_form" model = "ir.ui.view">
+			<field name="name">Employee Activity Report</field>
+			<field name="model">employee.dashboard</field>
+			<field name="arch" type="xml">
+				<form string ="Report">
+					<sheet>
+						<group col="4">
+							<group  col="2" colspan="2">
+								<field name = "from" />
+								<field name = "project_ids" >
+									<tree string = "Attendance Report" editbale = "1" create = "False">
+										<field name = "project_manager" invisible="1" />
+										<field name = "name" />
+									</tree>
+								</field>
+							</group>
+							<group  col="2" colspan="2">
+								<field name = "to" />
+								<field name = "state" />
+								<field name = "employee_ids">
+									<tree string = "Attendance Report" editbale = "1" create = "False">
+										<field name = "name" />
+									</tree>
+								</field>
+							</group>							
+						</group>
+						<footer>
+							<button name = "print_report" class = "oe_highlight" string = "Print" type="object" />
+							or
+							<button string="Cancel" class="oe_link" special="cancel"/>
+						</footer>						
+					</sheet>
+				</form>
+			</field>			
+		</record>
+		<record id = "action_activity_report_dashboard" model="ir.actions.act_window">
+            <field name="name">Activity Report</field>
+            <field name="res_model">employee.dashboard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name = "target">new</field>
+         </record>		
+		<menuitem id = "subchild_menu_employee_dashboard_report" name = "Activity Closure Report" sequence="2" parent = "pls.child_menu_dashboard" action = "action_activity_report_dashboard" />         
+	</data>
+</openerp>

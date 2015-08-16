@@ -14,6 +14,7 @@ class employee_activity(models.Model):
     _name = "employee.activity.line"
     _description = "Employee Activity Line"
     
+
     # Called from javascript for activity dashboard to return the list of projects,employee names,circle
     def list_caption(self,cr,uid,context=None):
         # if corporate_ids then no restriction else child_of projects,employees and no circle
@@ -121,8 +122,8 @@ class employee_activity(models.Model):
     mobile_phone = fields.Char(related = "employee_id.mobile_phone" ,string = "Project")
     work_location = fields.Char(related = "employee_id.work_location",string = "Base Location")
     current_location = fields.Char('Current Location')
-    site_id = fields.Char('Site ID')
-    site_name = fields.Char('Site Name')
+    site_id = fields.Many2one('project.site','Site')
+    site_code = fields.Char(related = "site_id.site_id",string="Site ID",readonly=True)
     work_description = fields.Many2one('project.description.line')
     activity_line = fields.Many2one('activity.line')
     state = fields.Selection([

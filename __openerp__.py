@@ -35,7 +35,10 @@
              'employee_activity.xml',
              'security/ir.model.access.csv',
              'activity_sequence.xml',
-             'dashboard.xml'
+             'dashboard.xml',
+             'report/activity_report.xml',
+             'wizard/employee_dashboard.xml'
+             
              ],
     'demo': [],
     'test': [],

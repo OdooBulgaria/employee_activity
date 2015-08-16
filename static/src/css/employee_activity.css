@@ -1,5 +1,21 @@
+select[name=work_description]{
+	width:150px !important;
+}
+select[name=site_id]{
+	width:150px !important;
+}
 table.employee_table{
-	margin-bottom:-35px;
+	margin-bottom:6px;
+}
+
+div.caption {
+	background-color:#DEDEDE;
+	padding-top:10px;
+	padding-bottom:10px;
+}
+
+.create_site_id {
+	padding-left:0px;
 }
 
 label{
@@ -11,7 +27,8 @@ a.create_cancel:hover{
 	color:black;
 }
 .openerp .add_line {
-          line-height: 26px; }
+          line-height: 26px;
+           }
 
 
 .openerp  .oe_form_sheetbg {

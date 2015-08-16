@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+	<data>
+		<record model="ir.actions.report.xml" id="aeroo_activity_report_ods">
+			<field name="name">Activity Report</field>
+			<field name="model">employee.activity.line</field>
+			<field name="report_name">activity_report_aeroo</field>
+			<field name="tml_source">file</field>
+			<field name="report_rml">employee_activity/report/employee_activity.ods</field>
+			<field name="parser_state">loc</field>
+			<field name="parser_loc">employee_activity/report/activity_report_parser.py</field>
+			<field name="report_type">aeroo</field>
+			<field name="in_format">oo-ods</field>
+			<field name="out_format" ref="report_aeroo.report_mimetypes_xls_odt"/>
+		</record>
+		
+		<record id="activity_report_aeroo_report_value_pdf_payment_odt" model="ir.values">
+            <field name="name">Activity Report</field>
+            <field name="model">employee.activity.line</field>
+            <field eval="'client_print_multi'" name="key2"/>
+            <field eval="'ir.actions.report.xml,' +str(aeroo_activity_report_ods)" name="value_unpickle"/>
+        </record>
+        
+   </data>
+</openerp>
