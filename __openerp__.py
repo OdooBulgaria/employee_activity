@@ -37,7 +37,8 @@
              'activity_sequence.xml',
              'dashboard.xml',
              'report/activity_report.xml',
-             'wizard/employee_dashboard.xml'
+             'wizard/employee_dashboard.xml',
+             'telecom.xml'
              
              ],
     'demo': [],

@@ -1,31 +1,6 @@
 <openerp>
 	<data>
 	   <menuitem id =  "menu_action_plan_parent"  name = "Action Plan"  groups = "pls.telecom_corporate,pls.telecom_circle_head,pls.telecom_project_manager" />
-		<record id = "employee_activity_form" model = "ir.ui.view">
-            <field name="name">Employee Activity Line</field>
-            <field name="model">telecom.project</field>
-            <field name="inherit_id" ref="pls.telecom_project_form_view" />
-            <field name="arch" type="xml">
-				<xpath expr = "/form/sheet/notebook" postion ="inside">
-					<page string = "Activity Lines">
-						<field name = "employee_activity_lines" nolabel = "1" readonly="1">
-							<tree string = "Employee Activity Line">
-								<field name = "date" />
-								<field name = "name" /> 
-								<field name = "employee_id" />
-								<field name = "site_id" />
-								<field name = "site_code" />
-								<field name = "work_description" />
-								<field name = "activity_line" />
-								<field name = "state" />
-								<field name = "remarks" />
-							</tree>
-						</field>					
-					</page>
-				</xpath>
-            </field>
-		</record>
-		
 		<!-- Registering the javascript -->
         <template id="assets_backend" name="employee_activity_assets" inherit_id="web.assets_backend">
             <xpath expr="." position="inside">
@@ -49,28 +24,30 @@
             <field name="model">employee.activity.line</field>
             <field name = "priority">1</field>
             <field name="arch" type="xml">
-            	<tree string = "Employee Activities">
+            	<tree string = "Employee Activities" editable="1">
+            		<button name = "open_form_activity" icon="gtk-redo" type="object" />
             		<field name = "date" />
             		<field name = "name" />
-            		<field name = "employee_id" />
+            		<field name = "employee_id" on_change="onchange_employee_id(employee_id)" />
             		<field name = "project_id" />
             		<field name = "state" />
-					<field name = "mobile_phone" />
-					<field name = "work_location"/>
+					<field name = "mobile_phone" string = "Mob."/>
+					<field name = "work_location" readonly="1"/>
 					<field name = "current_location" />
-					<field name = "site_id" />
 					<field name = "site_code" />
-					<field name = "work_description" />
-					<field name = "activity_line" />
-					<field name = "daily_allowance" />
+					<field name = "site_id" />
+					<field name = "work_description" domain = "[('project_id','=',project_id)]" widget="selection" />
+					<field name = "activity_line" domain = "[('line_id.activity_line.description_id','=',work_description)]" widget="selection" />
 					<field name = "multiple_employees" widget = "many2many_tags" />
 					<field name = "remarks" />
 					<field name = "reporting_time_site" />
 					<field name = "return_time_site" />
-					<field name = "distance_site_location" />
-					<field name = "travelling_allowance" />
-					<field name = "local_conveyance" />
-					<field name = "lodging" />					
+					<field name = "distance_site_location"  />
+					<field name = "daily_allowance" />
+					<field name = "travelling_allowance"  sum="total" />
+					<field name = "local_conveyance" sum="total" />
+					<field name = "lodging" sum="total" />	
+					<field name = "total_cost" sum="total" />				
             	</tree>
             </field>
         </record>      	
@@ -89,7 +66,7 @@
                         <div class="oe_title oe_left">
                             <label for="employee_id" class="oe_edit_only" />
                             <h1>
-								<field name = "employee_id" />
+								<field name = "employee_id" on_change="onchange_employee_id(employee_id)" />
                             </h1>
                             <label for="job_id" class="oe_edit_only" />
 							<field name = "job_id" readonly="1"/>
@@ -120,7 +97,7 @@
 										<field name = "site_id" />
 										<field name = "site_code" />
 										<field name = "work_description" domain = "[('project_id','=',project_id)]" widget="selection"/>
-										<field name = "activity_line" domain = "[('activity_line.description_id','=',work_description)]" widget="selection"/>
+										<field name = "activity_line" domain = "[('line_id.activity_line.description_id','=',work_description)]" widget="selection"/>
 										<field name = "daily_allowance" />
 										<field name = "multiple_employees" widget = "many2many_tags" />
 									</group>
@@ -133,6 +110,9 @@
 										<field name = "local_conveyance" />
 										<field name = "lodging" />
 									</group>
+								</group>
+								<group class="oe_subtotal_footer oe_right" colspan="2">
+									<field name = "total_cost" />
 								</group>
 							</page>
 						</notebook>

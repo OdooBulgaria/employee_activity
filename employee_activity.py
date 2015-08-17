@@ -4,17 +4,35 @@ from datetime import datetime
 from pytz import timezone
 from openerp.exceptions import except_orm
 
-class telecom_project(models.Model):
-    _inherit = "telecom.project"
-    _description = "Activity Functionality"
-    employee_activity_lines = fields.One2many('employee.activity.line','project_id')
-                
-    
 class employee_activity(models.Model):
     _name = "employee.activity.line"
     _description = "Employee Activity Line"
     
 
+    def onchange_employee_id(self,cr,uid,ids,employee_id,context=None):
+        employee = self.pool.get("hr.employee")
+        type = employee.read(cr,uid,employee_id,['emp_type'],context)
+        domain = [('type','=',type.get('emp_type','inhouse').lower())]
+        return {
+                'domain':{
+                          'activity_line':domain,
+                          }
+                }
+    
+    def open_form_activity(self,cr,uid,id,context=None):
+        dummy, view_id = self.pool.get('ir.model.data').get_object_reference(cr, uid, 'employee_activity', 'view_employee_activity_corporate')
+        return {
+            'view_mode': 'form',
+            'view_id': view_id,
+            'res_id':id[0],
+            'view_type': 'form',
+            'res_model': 'employee.activity.line',
+            'type': 'ir.actions.act_window',
+            'nodestroy': True,
+            'target': 'current',
+            'domain': '[]',
+        }    
+        
     # Called from javascript for activity dashboard to return the list of projects,employee names,circle
     def list_caption(self,cr,uid,context=None):
         # if corporate_ids then no restriction else child_of projects,employees and no circle
@@ -93,27 +111,43 @@ class employee_activity(models.Model):
                                                                    ('line_id.state','=','submitted')
                                                                    ],offset=0, limit=None, order=None, context=None, count=False)
         if present_ids:
-            # returns list of dictionary[{'employee_id':(id_employee,employee_name),id:id_employee_status_line}]
-            employee = employee_status_line.read(cr,uid,present_ids,['employee_id','current_project'],context) 
-#             employee_ids = map(lambda x:x.get('employee_id')[0],employee)
-            # Find their unclosed activities
+            employee = employee_status_line.browse(cr,uid,present_ids,context)
             for i in employee:
                 activity_ids = self.search(cr,SUPERUSER_ID,[
-                                                            ('employee_id','=',i.get('employee_id',False)[0]),
+                                                            ('employee_id','=',i.employee_id.id),
                                                             ('state','in',['uncompleted','wip','unattempted']),
                                                             ],offset=0, limit=None, order=None, context=None, count=False)
                 activity_info = self.read(cr,SUPERUSER_ID,activity_ids,[],context)
                 res.update({
-                            i.get('employee_id',False)[0]:{
-                                                            'current_project':i.get('current_project',False),
-                                                            'employee_id':i.get('employee_id',False)[0],
-                                                            'name':i.get('employee_id',False)[1],
-                                                            'activities':activity_info
-                                                          }
-                            })
+                            i.employee_id.id:{
+                                                'current_project':(i.current_project.id,i.current_project.name),
+                                                'employee_id':i.employee_id.id,
+                                                'name':i.employee_id.name,
+                                                'activities':activity_info,
+                                                'type':i.employee_id.emp_type.lower(),
+                                          }
+                            })                
+                
         else:
             raise except_orm(_('Action Plan'),_('No Emmployees Present'))
         return res
+    
+    @api.one
+    @api.depends(
+        'local_conveyance',
+        'travelling_allowance',
+        'daily_allowance',
+        'lodging',
+        'employee_id.emp_type',
+        'activity_line.cost',
+        'activity_line.type'
+    )
+    def _get_total_cost(self):
+        total_cost = self.local_conveyance + self.travelling_allowance + self.daily_allowance + self.lodging
+        if self.employee_id.emp_type == "Inhouse":
+            self.total_cost = round(total_cost,3)
+        elif self.employee_id.emp_type == "Vendor":
+            self.total_cost = self.activity_line.cost + total_cost 
     
     name = fields.Char("Sequence",readonly="1")
     employee_id = fields.Many2one('hr.employee',string = "Employee",required=True)
@@ -125,7 +159,7 @@ class employee_activity(models.Model):
     site_id = fields.Many2one('project.site','Site')
     site_code = fields.Char(related = "site_id.site_id",string="Site ID",readonly=True)
     work_description = fields.Many2one('project.description.line')
-    activity_line = fields.Many2one('activity.line')
+    activity_line = fields.Many2one('activity.line.line')
     state = fields.Selection([
                               ('completed','Completed'),
                               ('uncompleted','Not Completed'),
@@ -142,4 +176,4 @@ class employee_activity(models.Model):
     lodging = fields.Float('Lodging')
     multiple_employees = fields.Many2many('hr.employee','ativity_line_hr_employee_rel','line_id','employee_id','Replicate Activity')
     date = fields.Datetime("Date",default = datetime.now(timezone('Asia/Kolkata')).date(),required=True)
-    
+    total_cost = fields.Float(compute="_get_total_cost",string = "Total Cost")

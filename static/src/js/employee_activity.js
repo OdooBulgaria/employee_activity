@@ -138,9 +138,10 @@ openerp.employee_activity = function(instance, local) {
     		'click .toggle_match_head.glyphicon.glyphicon-play':"show_activities",
 			'click .toggle_create_head.glyphicon.glyphicon-play':"hide_activities"	
     	},
-    	init:function(parent,employee_id,employee_name,project_id,activities){
+    	init:function(parent,employee_id,employee_name,project_id,activities,type){
     		this._super(parent);
     		this.employee_id = employee_id;
+    		this.type = type;
     		this.employee_name = employee_name;
     		this.project_id = project_id;
     		this.project_name = project_id[1];
@@ -330,10 +331,10 @@ openerp.employee_activity = function(instance, local) {
 		                    tabindex: 10,
 		                    constructor: instance.web.form.FieldMany2One,
 		                    field_properties: {
-		                        relation: "activity.line",
+		                        relation: "activity.line.line",
 		                        string: _t("Activity"),
 		                        type: "many2one",
-		                        domain:[['activity_line.description_id','=',false]],
+		                        domain:[['line_id.activity_line.description_id','=',false]],
 		                    },
 						},
 	    				site_code:{
@@ -419,7 +420,7 @@ openerp.employee_activity = function(instance, local) {
                         id: "daily_allowance",
                         index: 11,
                         corresponding_property: "daily_allowance",
-                        label: _t("Daily Allowance Applied (TA)"),
+                        label: _t("Daily Allowance Applied (DA)"),
                         required: true,
                         tabindex: 13,
                         constructor: instance.web.form.FieldFloat,
@@ -455,17 +456,17 @@ openerp.employee_activity = function(instance, local) {
     		var self = this
     		activity_line = new openerp.Model('employee.activity.line');
     		if (self.mode == "edit"){
-        		activity_line.call('write', [self.line.id,{
-                	'site_id':self.line.site_id,
-                	'remarks':self.line.remarks,
-                	'distance_site_location':self.line.distance_site_location,
-                	'daily_allowance':self.line.daily_allowance,
-                	'current_location':self.line.current_location,
-                	'local_conveyance':self.line.local_conveyance,
-                	'reporting_time_site':self.line.reporting_time_site,
-                	'return_time_site':self.line.return_time_site,
-                	'travelling_allowance':self.line.travelling_allowance,
-                	'lodging':self.line.lodging,
+    			activity_line.call('write', [self.line.id,{
+                	'site_id':self.site_id_field.get("value"),
+                	'remarks':self.remarks_field.get("value"),
+                	'distance_site_location':self.distance_site_location_field.get("value"),
+                	'daily_allowance':self.daily_allowance_field.get("value"),
+                	'current_location':self.current_location_field.get("value"),
+                	'local_conveyance':self.local_conveyance_field.get("value"),
+                	'reporting_time_site':self.reporting_time_site_field.get("value"),
+                	'return_time_site':self.return_time_site_field.get("value"),
+                	'travelling_allowance':self.travelling_allowance_field.get("value"),
+                	'lodging':self.lodging_field.get("value"),
         		}]).then(function(){
         			self.rerender_caption(self.line);
         			self.$el.find('.toggle_create').click();
@@ -580,7 +581,7 @@ openerp.employee_activity = function(instance, local) {
                 field.on("change:value",self,function(event){
                 	self.line[event.name] =  event.get("value");
                 	if (event.name == 'work_description'){
-                		self.activity_line_field.field.domain = [['activity_line.description_id','=',self.line.work_description]]
+                		self.activity_line_field.field.domain = [['type','=',self.parent.type],['line_id.activity_line.description_id','=',self.line.work_description]]
                 	}
                 	if (event.name == 'site_id'){
                 		model = new openerp.Model('project.site');
@@ -665,7 +666,7 @@ openerp.employee_activity = function(instance, local) {
         		_.each(self.data,function(employee){
         			console.log(employee)
         			// employee.current_project is project_id in all the child widgets called
-                    activity_document= new local.activity_document(this,employee.employee_id,employee.name,employee.current_project,employee.activities);
+                    activity_document= new local.activity_document(this,employee.employee_id,employee.name,employee.current_project,employee.activities,employee.type);
                 	activity_document.appendTo(self.$el.find('div.oe_form_sheet.oe_form_sheet_width'))
         		})
         	}));

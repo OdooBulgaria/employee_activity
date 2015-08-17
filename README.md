@@ -15,3 +15,8 @@
 ---------------------
 - [ ] Create o2m field with project_id (telecom.project,required)
 - [ ] Add other related fields and functional field for cost,earnings and margins  
+
+
+# Project Tracker Calculation
+------------------------------------
+- Total of Employee Activity Line is Picked and then added in  the total expenses field in project tracker
