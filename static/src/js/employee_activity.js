@@ -3,7 +3,83 @@ openerp.employee_activity = function(instance, local) {
         _lt = instance.web._lt;
     var QWeb = instance.web.qweb;
 
+    // Project Tracker Dashboard
+    instance.web.views.add('tree_tracker_dashboard', 'instance.web.pls.filter_view_tracker');
+    instance.web.pls.filter_view_tracker = instance.web.ListView.extend({
+    	init:function(){
+            this._super.apply(this, arguments);
+            var self = this;
+            self.current_project= null;
+            self.project_list_sorted = [];
+		},
+    	start:function(){
+    		var self = this;
+    		var defs = []
+    		self.d = $.Deferred();
+            return this._super.apply(this, arguments).then(function(){
+            	self.$el.parent().prepend(QWeb.render("project_tracker_dashboard", {widget: this}));
+                self.$el.parent().find('.oe_select').change(function() {
+                		self.current_project = this.value === '' ? null : parseInt(this.value);
+    	                self.do_search(self.last_domain, self.last_context, self.last_group_by);
+    	            });            	
+            	var mod = new instance.web.Model("telecom.project", self.dataset.context, self.dataset.domain);
+                defs.push(mod.call("list_project", []).then(function(result) {
+                	self.project = result
+                	self.d.resolve();
+                }));
+                return $.when(defs)
+            });  		
+    	},
+    	
+    	do_search:function(domain, context, group_by){
+            var self = this;
+            this.last_domain = domain;
+            this.last_context = context;
+            this.last_group_by = group_by;
+            this.old_search = _.bind(this._super, this);
+            self.project_list_sorted = []
+            var o;
+            self.$el.parent().find('.oe_select').children().remove().end();
+            self.$el.parent().find('.oe_select').append(new Option('', ''));
+            $.when(self.d).then(function(){
+                if (self.project){
+                    for (var i = 0;i < self.project.length;i++){
+                    	self.project_list_sorted.push(self.project[i][0]);
+                    	o = new Option(self.project[i][1], self.project[i][0]);
+                        self.$el.parent().find('.oe_select').append(o);
+                    }            	
+                    self.$el.parent().find('.oe_select')[0].value = self.current_project;
+                }                        	
+            });
+            return self.search_by_project_id();    		
+    	},
+    	
+    	search_by_project_id: function() {
+            var self = this;
+            var domain = [];
+            
+            /*
+             * Check if the user is a Project Manager,Circle Head of Corporate
+             *  - If Project Manager then show all attendances for the project in which the project manager is 
+             *  - Corporate Head is able to see attendance of all his projects and the project managers under him 
+             *  - Corporate is able to see all
+             */
+            
+            if (self.current_project!== null) domain.push(['project_id','=',self.current_project]);
+            else{
+            	domain.push(["project_id", "in", self.project_list_sorted]);
+            }
+            self.last_context["project_id"] = self.current_project === null ? false : self.current_project;
+            var compound_domain = new instance.web.CompoundDomain(self.last_domain, domain);
+            self.dataset.domain = compound_domain.eval();
+            return self.old_search(compound_domain, self.last_context, self.last_group_by);            	
+        },            	
+    });    
 
+    
+    
+    
+    
     // Activity Dashboard
     instance.web.views.add('tree_activity_dashboard', 'instance.web.pls.filter_view_activities');
     instance.web.pls.filter_view_activities = instance.web.ListView.extend({
