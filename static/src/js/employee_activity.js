@@ -656,9 +656,9 @@ openerp.employee_activity = function(instance, local) {
                 
                 field.on("change:value",self,function(event){
                 	self.line[event.name] =  event.get("value");
-                	if (event.name == 'work_description'){
-                		self.activity_line_field.field.domain = [['type','=',self.parent.type],['line_id.activity_line.description_id','=',self.line.work_description]]
-                	}
+//                	if (event.name == 'work_description'){
+//                		self.activity_line_field.field.domain = [['type','=',self.parent.type],['line_id.activity_line.description_id','=',self.line.work_description]]
+//                	}
                 	if (event.name == 'site_id'){
                 		model = new openerp.Model('project.site');
                 		if (event.get("value") && typeof(event.get("value")) == "number"){
