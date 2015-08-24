@@ -31,12 +31,12 @@
             		<field name = "name" />
             		<field name = "employee_id" on_change="onchange_employee_id(employee_id)" />
             		<field name = "project_id" />
-            		<field name = "circle_id" readonly="1" />
+            		<field name = "circle_id" readonly="0" />
             		<field name = "state" />
-					<field name = "mobile_phone" string = "Mob." readonly="1"/>
-					<field name = "work_location" readonly="1"/>
-					<field name = "current_location" readonly="1"/>
-					<field name = "site_code" />
+					<field name = "mobile_phone" string = "Mob." readonly="0"/>
+					<field name = "work_location" readonly="0"/>
+					<field name = "current_location" readonly="0"/>
+					<field name = "site_code" readonly="0"/>
 					<field name = "site_id" />
 					<field name = "work_description" domain = "[('project_id','=',project_id)]" widget="selection" />
 					<field name = "activity_line" domain = "[('site_id','=',site_id),('line_id.activity_line.description_id','=',work_description)]" widget="selection" />
