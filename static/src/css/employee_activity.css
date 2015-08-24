@@ -106,7 +106,13 @@ padding-left: 8px;
   margin: auto; }
   
   
-.myclass_for_tree_view 
-	{min-width: 5000px;
-	max-width:10000px;}
-
+.openerp .myclass_for_tree_view
+	{
+	min-width: 5000px;
+	}
+	
+.openerp .myclass_for_project_tracker_tree_view
+	{
+	min-width: 5000px;
+	}
+	
