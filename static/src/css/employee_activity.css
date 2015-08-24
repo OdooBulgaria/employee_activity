@@ -100,3 +100,8 @@ padding-left: 8px;
   float: none;
   margin: auto; }
   
+  
+.myclass_for_tree_view 
+	{min-width: 5000px;
+	max-width:10000px;}
+

@@ -16,7 +16,7 @@
             <field name="model">activity.line.line</field>
             <field name = "priority">100</field>
             <field name="arch" type="xml">
-				<tree string = "Project Tracker" editable = "top" >
+				<tree string = "Project Tracker" editable = "top" class="myclass_for_tree_view" >
 					<field name = "work_description" readonly="1"/>
 					<field name = "IPR_no" />
 					<field name = "IPR_date" />

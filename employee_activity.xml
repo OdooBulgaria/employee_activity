@@ -24,7 +24,7 @@
             <field name="model">employee.activity.line</field>
             <field name = "priority">1</field>
             <field name="arch" type="xml">
-            	<tree string = "Employee Activities" editable="1">
+            	<tree string = "Employee Activities" editable="1" class="myclass_for_tree_view">
             		<button name = "open_form_activity" icon="gtk-redo" type="object" />
             		<field name = "id" invisible="1"/>
             		<field name = "date" />
