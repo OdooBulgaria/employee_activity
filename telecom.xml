@@ -129,6 +129,7 @@
 
 				<xpath expr = "/form/notebook/page[@string='Work Description']/field[@name='line_id']/form/sheet/group/field[@name='activity_ids']/form/sheet/group/field[@name='activity_line_line']/tree/field[@name='type']" position="before">
 					<field name = "done_by" widget = "many2many_tags" />
+					<field name = "IPR_no" />
 				</xpath>
             </field>
 		</record>
