@@ -1,6 +1,11 @@
 select[name=work_description]{
 	width:150px !important;
 }
+
+select[name=state]{
+	width:150px !important;
+}
+
 select[name=site_id]{
 	width:150px !important;
 }
@@ -86,7 +91,7 @@ a.create_cancel:hover{
   line-height: 26px;
   padding-right: 8px;
   min-width: 188px;
-  border-right: 1px solid #ddd;
+  border-right: 0px solid #ddd;
   white-space: nowrap;
   width: 10%; }
   
