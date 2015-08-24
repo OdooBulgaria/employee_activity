@@ -324,9 +324,9 @@ openerp.employee_activity = function(instance, local) {
     		this.line = line
             this.$super_container = null;
     		this.create_form_fields = {
-					work_description:{
+    				work_description:{
 	                   id: "work_description",
-	                    index: 0,
+	                    index: 2,
 	                    corresponding_property: "work_description", // a account.move field name
 	                    label: _t("Work Description"),
 	                    required: true,
@@ -341,7 +341,7 @@ openerp.employee_activity = function(instance, local) {
 					},
     				site_id:{
                         id: "site_id",
-                        index: 1,
+                        index: 3,
                         corresponding_property: "site_id",
                         label: _t("Site"),
                         required: true,
@@ -374,7 +374,7 @@ openerp.employee_activity = function(instance, local) {
                     },
     				current_location:{
                         id: "current_location",
-                        index: 3,
+                        index: 5,
                         corresponding_property: "current_location",
                         label: _t("Current Location"),
                         required: true,
@@ -387,7 +387,7 @@ openerp.employee_activity = function(instance, local) {
     				},
                     local_conveyance: {
                         id: "local_conveyance",
-                        index: 5,
+                        index: 6,
                         corresponding_property: "local_conveyance",
                         label: _t("Local Conveyance"),
                         required: true,
@@ -400,7 +400,7 @@ openerp.employee_activity = function(instance, local) {
                     },
 					activity_line:{
 		                   id: "activity_line",
-		                    index: 6,
+		                    index: 7,
 		                    corresponding_property: "activity_line", // a account.move field name
 		                    label: _t("Activity"),
 		                    required: true,
@@ -415,7 +415,7 @@ openerp.employee_activity = function(instance, local) {
 						},
 	    				site_code:{
 	                        id: "site_code",
-	                        index: 2,
+	                        index: 8,
 	                        corresponding_property: "site_code",
 	                        label: _t("Site ID"),
 	                        required: true,
@@ -429,7 +429,7 @@ openerp.employee_activity = function(instance, local) {
 						
 					remarks: {
                         id: "remarks",
-                        index: 7,
+                        index: 9,
                         corresponding_property: "remarks",
                         label: _t("Remarks"),
                         required: true,
@@ -442,7 +442,7 @@ openerp.employee_activity = function(instance, local) {
                     },						
                     reporting_time_site: {
                         id: "reporting_time_site",
-                        index: 7,
+                        index: 10,
                         corresponding_property: "reporting_time_site",
                         label: _t("Reporting Time"),
                         required: true,
@@ -455,7 +455,7 @@ openerp.employee_activity = function(instance, local) {
                     },
                     return_time_site:{
                         id: "return_time_site",
-                        index: 8,
+                        index: 11,
                         corresponding_property: "return_time_site",
                         label: _t("Returning Time"),
                         required: true,
@@ -468,7 +468,7 @@ openerp.employee_activity = function(instance, local) {
                     },
                     distance_site_location: {
                         id: "distance_site_location",
-                        index: 9,
+                        index: 12,
                         corresponding_property: "distance_site_location",
                         label: _t("Distance from Site Location"),
                         required: true,
@@ -481,20 +481,20 @@ openerp.employee_activity = function(instance, local) {
                     },                    
                     travelling_allowance: {
                         id: "travelling_allowance",
-                        index: 10,
+                        index: 13,
                         corresponding_property: "travelling_allowance",
-                        label: _t("Travelling Allowance Applied (TA)"),
+                        label: _t("Travelling Allowance(TA)"),
                         required: true,
                         tabindex: 13,
                         constructor: instance.web.form.FieldFloat,
                         field_properties: {
-                            string: _t("Travelling Allowance Applied (TA)"),
+                            string: _t("Travelling Allowance(TA)"),
                             type: "float",
                         },
                     },                                        
                     daily_allowance: {
                         id: "daily_allowance",
-                        index: 11,
+                        index: 14,
                         corresponding_property: "daily_allowance",
                         label: _t("Daily Allowance Applied (DA)"),
                         required: true,
@@ -507,7 +507,7 @@ openerp.employee_activity = function(instance, local) {
                     },                                                            
                     lodging: {
                         id: "lodging",
-                        index: 11,
+                        index: 15,
                         corresponding_property: "lodging",
                         label: _t("Lodging"),
                         required: true,
@@ -517,7 +517,21 @@ openerp.employee_activity = function(instance, local) {
                             string: _t("Lodging"),
                             type: "float",
                         },
-                    },                                                                                
+                    },
+                    multiple_employees:{
+ 	                   id: "multiple_employees",
+	                    index: 16,
+	                    corresponding_property: "multiple_employees", // a account.move field name
+	                    label: _t("Replicate Activity"),
+	                    required: true,
+	                    tabindex: 10,
+	                    constructor: instance.web.form.FieldMany2ManyTags,
+	                    field_properties: {
+	                    	relation: "hr.employee",
+	                        string: _t("Replicate Activity"),
+	                        type: "many2many",
+	                    },                    	
+                    },
                 };
     	},
     	create_cancel:function(){
@@ -531,9 +545,10 @@ openerp.employee_activity = function(instance, local) {
     	save_changes:function(event){
     		var self = this
     		activity_line = new openerp.Model('employee.activity.line');
+    		console.log("=============================================multiple_employees",self)
     		if (self.mode == "edit"){
     			activity_line.call('write', [self.line.id,{
-                	'site_id':self.site_id_field.get("value"),
+    				'site_id':self.site_id_field.get("value"),
                 	'remarks':self.remarks_field.get("value"),
                 	'distance_site_location':self.distance_site_location_field.get("value"),
                 	'daily_allowance':self.daily_allowance_field.get("value"),
@@ -638,6 +653,9 @@ openerp.employee_activity = function(instance, local) {
                 var field_data = create_form_fields_arr[i];
                 // create widgets
                 var node = new Default_node(field_data.id);
+                if (field_data.id == 'multiple_employees' && self.mode == 'edit'){
+                	continue;
+                }
                 if (! field_data.required) node.attrs.modifiers = "";
                 var field = new field_data.constructor(field_manager, node);
                 self[field_data.id+"_field"] = field;
@@ -648,17 +666,15 @@ openerp.employee_activity = function(instance, local) {
                 	field.modifiers.readonly = true;
                 }
                 
-                if (field.name == "site_code"){
-                	field.modifiers.readonly = true;
-                }
                 // on update : change the last created line
                 field.corresponding_property = field_data.corresponding_property;
                 
                 field.on("change:value",self,function(event){
                 	self.line[event.name] =  event.get("value");
-//                	if (event.name == 'work_description'){
-//                		self.activity_line_field.field.domain = [['type','=',self.parent.type],['line_id.activity_line.description_id','=',self.line.work_description]]
-//                	}
+                	if (event.name == 'work_description'){
+                		console.log("===================work_description");
+                		self.activity_line_field.field.domain = [['type','=',self.parent.type],['line_id.activity_line.description_id','=',self.line.work_description]]
+                	}
                 	if (event.name == 'site_id'){
                 		model = new openerp.Model('project.site');
                 		if (event.get("value") && typeof(event.get("value")) == "number"){
@@ -674,6 +690,9 @@ openerp.employee_activity = function(instance, local) {
     
                 // append to DOM
                 var $field_container = $(QWeb.render("form_create_field_employee_activity", {id: field_data.id, label: field_data.label}));
+                if (field_data.id == 'multiple_employees') {
+                	$field_container.find('td').css('width','150px')
+                }
                 field.appendTo($field_container.find("td"));
                 $super_container.find('div.oe_form').prepend($field_container);
     
