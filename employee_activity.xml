@@ -24,7 +24,7 @@
             <field name="model">employee.activity.line</field>
             <field name = "priority">1</field>
             <field name="arch" type="xml">
-            	<tree string = "Employee Activities" editable="1" class="myclass_for_tree_view">
+            	<tree string = "Employee Activities" editable="1" class="myclass_for_tree_view" >
             		<button name = "open_form_activity" icon="gtk-redo" type="object" />
             		<field name = "id" invisible="1"/>
             		<field name = "date" />
@@ -39,8 +39,8 @@
 					<field name = "site_code" />
 					<field name = "site_id" />
 					<field name = "work_description" domain = "[('project_id','=',project_id)]" widget="selection" />
-					<field name = "activity_line" domain = "[('line_id.activity_line.description_id','=',work_description)]" widget="selection" />
-					<field name = "multiple_employees" widget = "many2many_tags" attrs="{'readonly':[('id','=',True)]}"/>
+					<field name = "activity_line" domain = "[('site_id','=',site_id),('line_id.activity_line.description_id','=',work_description)]" widget="selection" />
+					<field name = "multiple_employees" widget = "many2many_tags" attrs="{'readonly':[('id','!=',False)]}"/>
 					<field name = "remarks" />
 					<field name = "reporting_time_site" />
 					<field name = "return_time_site" />
@@ -103,7 +103,7 @@
 										<field name = "site_id" />
 										<field name = "site_code" />
 										<field name = "work_description" domain = "[('project_id','=',project_id)]" widget="selection"/>
-										<field name = "activity_line" domain = "[('line_id.activity_line.description_id','=',work_description)]" widget="selection"/>
+										<field name = "activity_line" domain = "[('site_id','=',site_id),('line_id.activity_line.description_id','=',work_description)]" widget="selection"/>
 										<field name = "daily_allowance" />
 										<field name = "multiple_employees" widget = "many2many_tags" attrs="{'invisible':[('id','!=',False)]}" />
 										<field name = "id" invisible="1" />
