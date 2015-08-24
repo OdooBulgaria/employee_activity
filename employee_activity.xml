@@ -26,19 +26,21 @@
             <field name="arch" type="xml">
             	<tree string = "Employee Activities" editable="1">
             		<button name = "open_form_activity" icon="gtk-redo" type="object" />
+            		<field name = "id" invisible="1"/>
             		<field name = "date" />
             		<field name = "name" />
             		<field name = "employee_id" on_change="onchange_employee_id(employee_id)" />
             		<field name = "project_id" />
+            		<field name = "circle_id" readonly="1" />
             		<field name = "state" />
-					<field name = "mobile_phone" string = "Mob."/>
+					<field name = "mobile_phone" string = "Mob." readonly="1"/>
 					<field name = "work_location" readonly="1"/>
-					<field name = "current_location" />
+					<field name = "current_location" readonly="1"/>
 					<field name = "site_code" />
 					<field name = "site_id" />
 					<field name = "work_description" domain = "[('project_id','=',project_id)]" widget="selection" />
 					<field name = "activity_line" domain = "[('line_id.activity_line.description_id','=',work_description)]" widget="selection" />
-					<field name = "multiple_employees" widget = "many2many_tags" />
+					<field name = "multiple_employees" widget = "many2many_tags" attrs="{'readonly':[('id','=',True)]}"/>
 					<field name = "remarks" />
 					<field name = "reporting_time_site" />
 					<field name = "return_time_site" />
@@ -76,9 +78,9 @@
                             <h2>
 								<field name = "project_id"  />
                             </h2>
-                            <label for="date" class="oe_edit_only" />
+                            <label for="circle_id" class="oe_edit_only" />
                             <h2>
-								<field name = "date"  placeholder = "Date"/>
+                            	<field name = "circle_id" readonly="1" />
                             </h2>
 						</div>
                         <div class="oe_title oe_right">
@@ -86,6 +88,10 @@
                             <h1>
 								<field name = "name" nolabel="1"/>
                             </h1>
+                            <label for="date" class="oe_edit_only" />
+                            <h2>
+								<field name = "date"  placeholder = "Date"/>
+                            </h2>
 						</div>						
 						<notebook>
 							<page string = "Details" >
@@ -93,13 +99,14 @@
 									<group>
 										<field name = "mobile_phone" readonly="1" string = "Mobile" />
 										<field name = "work_location" readonly="1"/>
-										<field name = "current_location" />
+										<field name = "current_location" readonly="1" />
 										<field name = "site_id" />
 										<field name = "site_code" />
 										<field name = "work_description" domain = "[('project_id','=',project_id)]" widget="selection"/>
 										<field name = "activity_line" domain = "[('line_id.activity_line.description_id','=',work_description)]" widget="selection"/>
 										<field name = "daily_allowance" />
-										<field name = "multiple_employees" widget = "many2many_tags" />
+										<field name = "multiple_employees" widget = "many2many_tags" attrs="{'invisible':[('id','!=',False)]}" />
+										<field name = "id" invisible="1" />
 									</group>
 									<group>
 										<field name = "remarks" />

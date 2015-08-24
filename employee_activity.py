@@ -8,16 +8,17 @@ class employee_activity(models.Model):
     _name = "employee.activity.line"
     _description = "Employee Activity Line"
     
-
     def onchange_employee_id(self,cr,uid,ids,employee_id,context=None):
         employee = self.pool.get("hr.employee")
-        type = employee.read(cr,uid,employee_id,['emp_type'],context)
-        domain = [('type','=',type.get('emp_type','inhouse').lower())]
-        return {
-                'domain':{
-                          'activity_line':domain,
-                          }
-                }
+        if ids:
+            type = employee.read(cr,uid,employee_id,['emp_type'],context)
+            domain = [('type','=',type.get('emp_type','inhouse').lower())]
+            return {
+                    'domain':{
+                              'activity_line':domain,
+                              }
+                    }
+        return {}
     
     def open_form_activity(self,cr,uid,id,context=None):
         dummy, view_id = self.pool.get('ir.model.data').get_object_reference(cr, uid, 'employee_activity', 'view_employee_activity_corporate')
@@ -75,7 +76,15 @@ class employee_activity(models.Model):
         vals['name'] = self.pool.get('ir.sequence').get(cr, uid, 'employee.activity.line') or '/'
         if not vals.get('date',False):
             vals.update({'date':datetime.now(timezone('Asia/Kolkata'))})
-        return super(employee_activity,self).create(cr,uid,vals,context)
+        activity_line_id=super(employee_activity,self).create(cr,uid,vals,context)
+        employee_ids=vals.get('multiple_employees',False)
+        if employee_ids:
+            for i in employee_ids[0][2] :
+                defaults={'employee_id':i,
+                          'multiple_employees':False
+                          }
+                self.copy(cr, uid, activity_line_id, defaults,context=None)
+        return activity_line_id
     
     def list_employees_activity_data(self,cr,uid,context=None):
         '''
@@ -177,3 +186,4 @@ class employee_activity(models.Model):
     multiple_employees = fields.Many2many('hr.employee','ativity_line_hr_employee_rel','line_id','employee_id','Replicate Activity')
     date = fields.Datetime("Date",default = datetime.now(timezone('Asia/Kolkata')).date(),required=True)
     total_cost = fields.Float(compute="_get_total_cost",string = "Total Cost")
+    circle_id = fields.Many2one(relation = 'telecom.circle',related = "project_id.circle",string = "Circle",store = True)
