@@ -73,7 +73,6 @@ class employee_activity(models.Model):
         return res
     
     def create(self,cr,uid,vals,context=None):
-        print "=======================vals",vals
         vals['name'] = self.pool.get('ir.sequence').get(cr, uid, 'employee.activity.line') or '/'
         if not vals.get('date',False):
             vals.update({'date':datetime.now(timezone('Asia/Kolkata'))})
@@ -114,9 +113,16 @@ class employee_activity(models.Model):
             raise except_orm(_('Invalid user Configuration'),_('Sorry!!! No Employee attached to the user. Please contact the admin panel'))            
         corporate_ids = self.pool.get('attendance.attendance')._get_user_ids_group(cr,uid,'pls','telecom_corporate')
         employee_status_line = self.pool.get('employee.status.line')
-        present_ids = employee_status_line.search(cr,SUPERUSER_ID,[
+        if uid in corporate_ids:
+                    present_ids = employee_status_line.search(cr,SUPERUSER_ID,[
                                                                    ('date','=',datetime.now(timezone('Asia/Kolkata')).date()),
-                                                                   ('employee_id','child_of',user_info.get('emp_id',False)[0]),
+                                                                   ('state','in',['present','tour']),
+                                                                   ('line_id.state','=','submitted')
+                                                                   ],offset=0, limit=None, order=None, context=None, count=False)
+        else:
+            present_ids = employee_status_line.search(cr,SUPERUSER_ID,[
+                                                                   ('date','=',datetime.now(timezone('Asia/Kolkata')).date()),
+                                                                   ('employee_id','child_of',user_info.get('emp_id',False)[0]),                                                                   
                                                                    ('state','in',['present','tour']),
                                                                    ('line_id.state','=','submitted')
                                                                    ],offset=0, limit=None, order=None, context=None, count=False)
