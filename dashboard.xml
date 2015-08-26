@@ -20,7 +20,7 @@
 					<field name = "work_description" readonly="1"/>
 					<field name = "IPR_no" />
 					<field name = "IPR_date" />
-					<field name = "site_code" />
+					<field name = "site_code" readonly="0"/>
 					<field name = "site_id" />
 					<field name = "po_status" />
 					<field name = "line_id" />
@@ -28,9 +28,9 @@
 					<field name = "cost" sum="total" />
 					<field name = "per_unit_price" />
 					<field name = "advance_paid_to_vendor" sum="total" />
-					<field name = "balance_payment" sum="total"  />
-					<field name = "total_cost" sum="total"/>
-					<field name = "done_by" widget = "many2many_tags" />
+					<field name = "balance_payment" sum="total" readonly="0" />
+					<field name = "total_cost" sum="total" readonly="0"/>
+					<field name = "done_by" widget = "many2many_tags" readonly="0"/>
 					<field name = "activity_start_date" />
 					<field name = "activity_end_date" />
 					<field name = "wcc_sign_off_status" />
