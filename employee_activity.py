@@ -136,7 +136,8 @@ class employee_activity(models.Model):
                 activity_info = self.read(cr,SUPERUSER_ID,activity_ids,[],context)
                 res.update({
                             i.employee_id.id:{
-                                                'current_project':(i.current_project.id,i.current_project.name),
+                                                'user_employee_id':user_info.get('emp_id',False)[0],
+                                                'current_project':(i.employee_id.current_project.id,i.employee_id.current_project.name),
                                                 'employee_id':i.employee_id.id,
                                                 'name':i.employee_id.name,
                                                 'activities':activity_info,
@@ -145,7 +146,7 @@ class employee_activity(models.Model):
                             })                
                 
         else:
-            raise except_orm(_('Action Plan'),_('No Emmployees Present'))
+            raise except_orm(_('Action Plan'),_('No Employees Present'))
         return res
     
     @api.one
@@ -160,13 +161,14 @@ class employee_activity(models.Model):
     )
     def _get_total_cost(self):
         total_cost = self.local_conveyance + self.travelling_allowance + self.daily_allowance + self.lodging
-        if self.employee_id.emp_type == "Inhouse":
+        if self.employee_id.emp_type == "inhouse":
             self.total_cost = round(total_cost,3)
-        elif self.employee_id.emp_type == "Vendor":
+        elif self.employee_id.emp_type == "vendor":
             self.total_cost = self.activity_line.cost + total_cost 
     
     name = fields.Char("Sequence",readonly="1")
     employee_id = fields.Many2one('hr.employee',string = "Employee",required=True)
+    emp_type = fields.Selection(related = "employee_id.emp_type",string = 'Employee Type',store=True,readonly=True)
     job_id = fields.Many2one(relation = 'hr.job',related = "employee_id.job_id",string = "Designation",store = True)
     project_id = fields.Many2one('telecom.project' ,string = "Project",required=True )
     mobile_phone = fields.Char(related = "employee_id.mobile_phone" ,string = "Project")
