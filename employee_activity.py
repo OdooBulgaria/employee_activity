@@ -14,6 +14,9 @@ class employee_activity(models.Model):
             type = employee.read(cr,uid,employee_id,['emp_type'],context)
             domain = [('type','=',type.get('emp_type','inhouse').lower())]
             return {
+                    'value':{
+                             'activity_line':False,
+                             },
                     'domain':{
                               'activity_line':domain,
                               }
