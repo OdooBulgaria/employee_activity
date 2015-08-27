@@ -87,7 +87,7 @@
 	    		<span style="cursor:pointer;"><strong><t t-esc = "name"></t></strong></span>
 			</t>			
 			<span><strong>&#160;[Current Project:&#160;<t t-esc = "project_name">]</t></strong></span>
-			<span><button  class="create_new name oe_right">Create Activity</button></span>
+			<span><button tabindex="101"  class="create_new name oe_right">Create Activity</button></span>
     	</div>
     	
     </t>
@@ -140,9 +140,9 @@
 	   		</td>
 	   		<td>
 	   			<div class = "oe_right">
-	   				<button class="save_changes oe_highlight">Save</button>
+	   				<button tabindex = "99" class="save_changes oe_highlight">Save</button>
 	   				<t t-if = "mode == 'create'" >
-	   					<a class="create_cancel" style = "padding:24px;line-height:4;font-size:xx-large" href = "javascript:void(0)">
+	   					<a tabindex = "100" class="create_cancel" style = "padding:24px;line-height:4;font-size:xx-large" href = "javascript:void(0)">
 						X
 						</a>
 	   				</t>
