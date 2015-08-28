@@ -66,7 +66,7 @@ class activity_line_line(models.Model):
         vals.update({'tracker_line_id':tracker_id})
         return super(activity_line_line,self).create(cr,uid,vals,context)
 
-    
+#     earned = fields.Float(compute = _get_total_earned,string = "Earning")
     employee_activity_line = fields.One2many('employee.activity.line','activity_line',"Activities")
     total_cost = fields.Float(compute = _compute_total_cost,string = "Total Expenses")
     tracker_line_id = fields.Many2one('project.tracker',string='Tracker Line',ondelete="cascade",required=True)

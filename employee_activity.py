@@ -9,19 +9,11 @@ class employee_activity(models.Model):
     _description = "Employee Activity Line"
     
     def onchange_employee_id(self,cr,uid,ids,employee_id,context=None):
-        employee = self.pool.get("hr.employee")
-        if ids:
-            type = employee.read(cr,uid,employee_id,['emp_type'],context)
-            domain = [('type','=',type.get('emp_type','inhouse').lower())]
-            return {
-                    'value':{
-                             'activity_line':False,
-                             },
-                    'domain':{
-                              'activity_line':domain,
-                              }
-                    }
-        return {}
+        return {
+                'value':{
+                         'activity_line':False,
+                         },
+                }
     
     def open_form_activity(self,cr,uid,id,context=None):
         dummy, view_id = self.pool.get('ir.model.data').get_object_reference(cr, uid, 'employee_activity', 'view_employee_activity_corporate')
