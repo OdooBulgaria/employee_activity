@@ -31,25 +31,30 @@
             		<field name = "name" />
             		<field name = "employee_id" on_change="onchange_employee_id(employee_id)" />
             		<field name = "project_id" />
-            		<field name = "circle_id" readonly="0" />
+            		<field name = "circle_id" readonly="1" />
             		<field name = "state" />
 					<field name = "mobile_phone" string = "Mob." readonly="0"/>
-					<field name = "work_location" readonly="0"/>
-					<field name = "current_location" readonly="0"/>
+					<field name = "work_location" readonly="1"/>
+					<field name = "current_location" readonly="1"/>
 					<field name = "site_id" />
-					<field name = "site_code" readonly="0"/>
+					<field name = "site_code" readonly="1"/>
+					<field name = "description_id" invisible="1"/>
 					<field name = "work_description" domain = "[('project_id','=',project_id)]" widget="selection" />
 					<field name = "emp_type" invisible="1" /> <!--  Just for the purpose of activity_line domain -->
-					<field name = "activity_line" domain = "[('site_id','=',site_id),('type','=',emp_type),('line_id.activity_line.description_id','=',work_description)]" widget="selection" />
+					<field name = "activity_line" domain = "[('site_id','=',site_id),('type','=',emp_type),('work_description','=',description_id)]" widget="selection"/>
 					<field name = "multiple_employees" widget = "many2many_tags" attrs="{'readonly':[('id','!=',False)]}"/>
 					<field name = "remarks" />
 					<field name = "reporting_time_site" />
 					<field name = "return_time_site" />
 					<field name = "distance_site_location"  />
-					<field name = "daily_allowance" />
+					<field name = "daily_allowance" sum="total" />
+					<field name = "daily_allowance_approved" sum="total"/>
 					<field name = "travelling_allowance"  sum="total" />
+					<field name = "travelling_allowance_approved"  sum="total" />
 					<field name = "local_conveyance" sum="total" />
-					<field name = "lodging" sum="total" />	
+					<field name = "local_conveyance_approved" sum="total" />
+					<field name = "lodging" sum="total" />
+					<field name = "lodging_approved" sum="total" />		
 					<field name = "total_cost" sum="total" />				
             	</tree>
             </field>
@@ -105,8 +110,8 @@
 										<field name = "site_code" />
 										<field name = "emp_type" invisible="1" />
 										<field name = "work_description" domain = "[('project_id','=',project_id)]" widget="selection"/>
-										<field name = "activity_line" domain = "[('site_id','=',site_id),('type','=',emp_type),('line_id.activity_line.description_id','=',work_description)]" widget="selection"/>
-										<field name = "daily_allowance" />
+										<field name = "description_id" invisible="1"/>
+										<field name = "activity_line" domain = "[('site_id','=',site_id),('type','=',emp_type),('work_description','=',description_id)]" widget="selection"/>
 										<field name = "multiple_employees" widget = "many2many_tags" attrs="{'invisible':[('id','!=',False)]}" />
 										<field name = "id" invisible="1" />
 										
@@ -116,14 +121,29 @@
 										<field name = "reporting_time_site" />
 										<field name = "return_time_site" />
 										<field name = "distance_site_location" />
-										<field name = "travelling_allowance" />
-										<field name = "local_conveyance" />
-										<field name = "lodging" />
 									</group>
 								</group>
 								<group class="oe_subtotal_footer oe_right" colspan="2">
 									<field name = "total_cost" />
 								</group>
+								<notebook>
+									<page string = "Associated Costs" >
+										<group>
+											<group>
+												<field name = "daily_allowance" />
+												<field name = "travelling_allowance" />
+												<field name = "local_conveyance" />
+												<field name = "lodging" />
+											</group>
+											<group>
+												<field name = "daily_allowance_approved" />
+												<field name = "travelling_allowance_approved" />
+												<field name = "local_conveyance_approved" />
+												<field name = "lodging_approved" />										
+											</group>
+										</group>
+									</page>									
+								</notebook>
 							</page>
 						</notebook>
 					</sheet>

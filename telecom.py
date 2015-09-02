@@ -17,10 +17,10 @@ class activity_line_line(models.Model):
     @api.depends(
                 'employee_activity_line.employee_id.emp_type',
                 'cost',
-                'employee_activity_line.local_conveyance',
-                'employee_activity_line.travelling_allowance',
-                'employee_activity_line.daily_allowance',
-                'employee_activity_line.lodging',
+                'employee_activity_line.local_conveyance_approved',
+                'employee_activity_line.travelling_allowance_approved',
+                'employee_activity_line.daily_allowance_approved',
+                'employee_activity_line.lodging_approved',
                 'type'
                  )
     def _compute_total_cost(self):

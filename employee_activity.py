@@ -145,17 +145,23 @@ class employee_activity(models.Model):
         return res
     
     @api.one
+    @api.onchange('project_id')
+    def onchange_project_id(self):
+        self.activity_line = False
+        self.work_description = False
+        
+    @api.one
     @api.depends(
-        'local_conveyance',
-        'travelling_allowance',
-        'daily_allowance',
-        'lodging',
+        'local_conveyance_approved',
+        'travelling_allowance_approved',
+        'daily_allowance_approved',
+        'lodging_approved',
         'employee_id.emp_type',
         'activity_line.cost',
         'activity_line.type'
     )
     def _get_total_cost(self):
-        total_cost = self.local_conveyance + self.travelling_allowance + self.daily_allowance + self.lodging
+        total_cost = self.local_conveyance_approved + self.travelling_allowance_approved + self.daily_allowance_approved + self.lodging_approved
         if self.employee_id.emp_type == "inhouse":
             self.total_cost = round(total_cost,3)
         elif self.employee_id.emp_type == "vendor":
@@ -172,6 +178,7 @@ class employee_activity(models.Model):
     site_id = fields.Many2one('project.site','Site')
     site_code = fields.Char(related = "site_id.site_id",string="Site ID",readonly=True)
     work_description = fields.Many2one('project.description.line')
+    description_id = fields.Many2one(relation="work.description",related="work_description.description_id",string = "Description Line Item",store=True,invisible=True)# Just for the purpose of domains
     activity_line = fields.Many2one('activity.line.line')
     state = fields.Selection([
                               ('completed','Completed'),
@@ -191,3 +198,7 @@ class employee_activity(models.Model):
     date = fields.Datetime("Date",default = datetime.now(timezone('Asia/Kolkata')).date(),required=True)
     total_cost = fields.Float(compute="_get_total_cost",string = "Total Cost")
     circle_id = fields.Many2one(relation = 'telecom.circle',related = "project_id.circle",string = "Circle",store = True)
+    local_conveyance_approved = fields.Float('Local Conveyance (LC) Approved')
+    travelling_allowance_approved = fields.Float("Travelling Allowance Approved")
+    daily_allowance_approved = fields.Float("Daily Allowance Approved")
+    lodging_approved = fields.Float("Lodging Approved")
