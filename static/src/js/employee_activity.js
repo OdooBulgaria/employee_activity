@@ -712,10 +712,10 @@ openerp.employee_activity = function(instance, local) {
                     field.$el.find("input").keyup(function(e, field){ field.commit_value(); }.bind(null, null, field));
                 }
                 if (field.name == 'state'){
-                	console.log(field.$el.find("select[name='state']"));
-                	field.$el.keyup(function(e,field){
+                	field.$el.keydown(function(e,field){
                 		if (e.keyCode == 9){
                 			e.preventDefault();
+                			self.current_location_field.$el.find("input").focus();
                 		}
                 	})
                 
