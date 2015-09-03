@@ -316,7 +316,6 @@ openerp.employee_activity = function(instance, local) {
     	init:function(parent,employee_id,line,employee_name,project_id,mode){
     		this._super(parent);
     		this.parent = parent;
-    		console.log("=================employee_id",employee_id);
     		this.mode = mode; // if mode = create then create widget
     		this.employee_id = employee_id;
     		this.project_id = project_id;
@@ -331,7 +330,7 @@ openerp.employee_activity = function(instance, local) {
 	                    corresponding_property: "work_description", // a account.move field name
 	                    label: _t("Work Description"),
 	                    required: true,
-	                    tabindex: 10,
+	                    tabindex: 0,
 	                    constructor: instance.web.form.FieldSelection,
 	                    field_properties: {
 	                    	relation: "project.description.line",
@@ -346,7 +345,7 @@ openerp.employee_activity = function(instance, local) {
                         corresponding_property: "site_id",
                         label: _t("Site"),
                         required: true,
-                        tabindex: 11,
+                        tabindex: 1,
                         constructor: instance.web.form.FieldSelection,
                         field_properties: {
                             relation:"project.site",
@@ -360,7 +359,7 @@ openerp.employee_activity = function(instance, local) {
                         corresponding_property: "state",
                         label: _t("Status"),
                         required: true,
-                        tabindex: 11,
+                        tabindex: 2,
                         constructor: instance.web.form.FieldSelection,
                         field_properties: {
                             string: _t("Status"),
@@ -379,33 +378,34 @@ openerp.employee_activity = function(instance, local) {
                         corresponding_property: "current_location",
                         label: _t("Current Location"),
                         required: true,
-                        tabindex: 11,
+                        tabindex: 3,
                         constructor: instance.web.form.FieldChar,
                         field_properties: {
                             string: _t("Current Location"),
                             type: "char",
                         },    					
     				},
-                    local_conveyance: {
-                        id: "local_conveyance",
+
+                    distance_site_location: {
+                        id: "distance_site_location",
                         index: 6,
-                        corresponding_property: "local_conveyance",
-                        label: _t("Local Conveyance"),
+                        corresponding_property: "distance_site_location",
+                        label: _t("Distance from Site Location"),
                         required: true,
-                        tabindex: 13,
+                        tabindex: 4,
                         constructor: instance.web.form.FieldFloat,
                         field_properties: {
-                            string: _t("Local Conveyance"),
+                            string: _t("Distance from Site Location"),
                             type: "float",
                         },
-                    },
-					activity_line:{
+                    },                    
+    				activity_line:{
 		                   id: "activity_line",
 		                    index: 7,
 		                    corresponding_property: "activity_line", // a account.move field name
 		                    label: _t("Activity"),
 		                    required: true,
-		                    tabindex: 10,
+		                    tabindex: 5,
 		                    constructor: instance.web.form.FieldMany2One,
 		                    field_properties: {
 		                        relation: "activity.line.line",
@@ -420,7 +420,7 @@ openerp.employee_activity = function(instance, local) {
 	                        corresponding_property: "site_code",
 	                        label: _t("Site ID"),
 	                        required: true,
-	                        tabindex: 11,
+	                        tabindex: 6,
 	                        constructor: instance.web.form.FieldChar,
 	                        field_properties: {
 	                        	string: _t("Site ID"),
@@ -434,7 +434,7 @@ openerp.employee_activity = function(instance, local) {
                         corresponding_property: "remarks",
                         label: _t("Remarks"),
                         required: true,
-                        tabindex: 11,
+                        tabindex: 7,
                         constructor: instance.web.form.FieldChar,
                         field_properties: {
                             string: _t("Remarks"),
@@ -447,7 +447,7 @@ openerp.employee_activity = function(instance, local) {
                         corresponding_property: "reporting_time_site",
                         label: _t("Reporting Time"),
                         required: true,
-                        tabindex: 11,
+                        tabindex: 8,
                         constructor: instance.web.form.FieldDatetime,
                         field_properties: {
                             string: _t("Reporting Time"),
@@ -460,33 +460,34 @@ openerp.employee_activity = function(instance, local) {
                         corresponding_property: "return_time_site",
                         label: _t("Returning Time"),
                         required: true,
-                        tabindex: 11,
+                        tabindex: 9,
                         constructor: instance.web.form.FieldDatetime,
                         field_properties: {
                             string: _t("Returning Time"),
                             type: "datetime",
                         },
                     },
-                    distance_site_location: {
-                        id: "distance_site_location",
+                    local_conveyance: {
+                        id: "local_conveyance",
                         index: 12,
-                        corresponding_property: "distance_site_location",
-                        label: _t("Distance from Site Location"),
+                        corresponding_property: "local_conveyance",
+                        label: _t("Local Conveyance"),
                         required: true,
-                        tabindex: 13,
+                        tabindex: 10,
                         constructor: instance.web.form.FieldFloat,
                         field_properties: {
-                            string: _t("Distance from Site Location"),
+                            string: _t("Local Conveyance"),
                             type: "float",
                         },
-                    },                    
+                    },
+
                     travelling_allowance: {
                         id: "travelling_allowance",
                         index: 13,
                         corresponding_property: "travelling_allowance",
                         label: _t("Travelling Allowance(TA)"),
                         required: true,
-                        tabindex: 13,
+                        tabindex: 11,
                         constructor: instance.web.form.FieldFloat,
                         field_properties: {
                             string: _t("Travelling Allowance(TA)"),
@@ -499,7 +500,7 @@ openerp.employee_activity = function(instance, local) {
                         corresponding_property: "daily_allowance",
                         label: _t("Daily Allowance Applied (DA)"),
                         required: true,
-                        tabindex: 13,
+                        tabindex: 12,
                         constructor: instance.web.form.FieldFloat,
                         field_properties: {
                             string: _t("Daily Allowance Applied (TA)"),
@@ -525,7 +526,7 @@ openerp.employee_activity = function(instance, local) {
 	                    corresponding_property: "multiple_employees", // a account.move field name
 	                    label: _t("Replicate Activity"),
 	                    required: true,
-	                    tabindex: 10,
+	                    tabindex: 14,
 	                    constructor: instance.web.form.FieldMany2ManyTags,
 	                    field_properties: {
 	                    	relation: "hr.employee",
@@ -564,7 +565,8 @@ openerp.employee_activity = function(instance, local) {
         			self.$el.find('.toggle_create').click();
                 })    			
     		}
-    	   if (self.mode == "create"){
+    	   
+    		if (self.mode == "create"){
     		   if (!self.line.activity_line || !self.line.work_description){
     			   alert("You are required to assign an activity and work description");
     			   return;
@@ -671,7 +673,7 @@ openerp.employee_activity = function(instance, local) {
                 if (self.mode != "create" && (field.name == "work_description" || field.name == "activity_line")  ){
                 	field.modifiers.readonly = true;
                 }
-                
+
                 // on update : change the last created line
                 field.corresponding_property = field_data.corresponding_property;
                 
@@ -709,6 +711,15 @@ openerp.employee_activity = function(instance, local) {
                     // Triggers change:value TODO : moche bind ?
                     field.$el.find("input").keyup(function(e, field){ field.commit_value(); }.bind(null, null, field));
                 }
+                if (field.name == 'state'){
+                	console.log(field.$el.find("select[name='state']"));
+                	field.$el.keyup(function(e,field){
+                		if (e.keyCode == 9){
+                			e.preventDefault();
+                		}
+                	})
+                
+                }                
                 field.$el.find("input").attr("tabindex", field_data.tabindex);
     
                 // Hide the field if group not OK

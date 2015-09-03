@@ -8,6 +8,8 @@ class employee_activity(models.Model):
     _name = "employee.activity.line"
     _description = "Employee Activity Line"
     
+    
+    
     def onchange_employee_id(self,cr,uid,ids,employee_id,context=None):
         return {
                 'value':{
