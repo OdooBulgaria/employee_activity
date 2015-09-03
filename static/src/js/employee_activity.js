@@ -565,6 +565,11 @@ openerp.employee_activity = function(instance, local) {
                 })    			
     		}
     	   if (self.mode == "create"){
+    		   if (!self.line.activity_line || !self.line.work_description){
+    			   alert("You are required to assign an activity and work description");
+    			   return;
+			   
+    		   } 
     		   activity_line.call('create', [{
        			'activity_line':self.line.activity_line || false,
        			'work_description':self.line.work_description || false,
@@ -673,6 +678,7 @@ openerp.employee_activity = function(instance, local) {
                 field.on("change:value",self,function(event){
                 	self.line[event.name] =  event.get("value");
                 	if (event.name == 'work_description'){
+                		self.activity_line_field.set_value(false);
                 		self.activity_line_field.field.domain = [['site_id','=',self.site_id_field.get("value")],['type','=',self.parent.type],['line_id.activity_line.description_id','=',self.line.work_description]]
                 			
                 	}
