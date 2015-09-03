@@ -316,6 +316,7 @@ openerp.employee_activity = function(instance, local) {
     	init:function(parent,employee_id,line,employee_name,project_id,mode){
     		this._super(parent);
     		this.parent = parent;
+    		console.log("=================employee_id",employee_id);
     		this.mode = mode; // if mode = create then create widget
     		this.employee_id = employee_id;
     		this.project_id = project_id;
@@ -530,6 +531,7 @@ openerp.employee_activity = function(instance, local) {
 	                    	relation: "hr.employee",
 	                        string: _t("Replicate Activity"),
 	                        type: "many2many",
+	                        domain:[['emp_type','=',parent.type],['id','!=',employee_id]],
 	                    },                    	
                     },
                 };
@@ -545,7 +547,6 @@ openerp.employee_activity = function(instance, local) {
     	save_changes:function(event){
     		var self = this
     		activity_line = new openerp.Model('employee.activity.line');
-    		console.log("=============================================multiple_employees",self)
     		if (self.mode == "edit"){
     			activity_line.call('write', [self.line.id,{
     				'site_id':self.site_id_field.get("value"),
@@ -675,7 +676,6 @@ openerp.employee_activity = function(instance, local) {
                 		self.activity_line_field.field.domain = [['site_id','=',self.site_id_field.get("value")],['type','=',self.parent.type],['line_id.activity_line.description_id','=',self.line.work_description]]
                 			
                 	}
-                	console.log(self.activity_line_field.field.domain);
                 	if (event.name == 'site_id'){
                 		model = new openerp.Model('project.site');
                 		self.activity_line_field.field.domain = [['site_id','=',self.site_id_field.get("value")],['type','=',self.parent.type],['line_id.activity_line.description_id','=',self.line.work_description]]

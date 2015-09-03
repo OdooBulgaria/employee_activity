@@ -30,6 +30,7 @@
 					<field name = "vendor_id" attrs = "{'invisible':[('type','!=','vendor')]}" />
 					<field name = "advance_paid_to_vendor" sum="total" />
 					<field name = "balance_payment" sum="total" readonly="0" />
+					<field name = "earned_amount" sum="total" />
 					<field name = "total_cost" sum="total" readonly="0"/>
 					<field name = "done_by" widget = "many2many_tags" readonly="0"/>
 					<field name = "activity_start_date" />

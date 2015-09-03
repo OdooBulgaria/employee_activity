@@ -13,6 +13,15 @@ class activity_line_line(models.Model):
                  'project.tracker': 'tracker_line_id'
     }
 
+    
+    @api.one
+    @api.depends()
+    def _get_amount_earned(self):
+        total_activity_line_line = len(self.line_id.activity_line_line)
+        if total_activity_line_line > 0:
+            self.earned_amount = self.line_id.cost / float(total_activity_line_line)
+        else:
+            self.earned_amount = 0
     @api.one
     @api.depends(
                 'employee_activity_line.employee_id.emp_type',
@@ -70,3 +79,4 @@ class activity_line_line(models.Model):
     employee_activity_line = fields.One2many('employee.activity.line','activity_line',"Activities")
     total_cost = fields.Float(compute = _compute_total_cost,string = "Total Expenses")
     tracker_line_id = fields.Many2one('project.tracker',string='Tracker Line',ondelete="cascade",required=True)
+    earned_amount = fields.Float(compute = "_get_amount_earned",string = "Earnings")
