@@ -8,12 +8,34 @@ class employee_activity(models.Model):
     _name = "employee.activity.line"
     _description = "Employee Activity Line"
     
+    def _check_work_description(self,cr,uid,ids,context=None):
+        for i in self.browse(cr,uid,ids,context):
+            if i.work_description.id in i.project_id.line_id.ids :
+                return True
+        return False
     
+    def _check_activity_line(self,cr,uid,ids,context=None):
+        for i in self.browse(cr,uid,ids,context):
+            if i.activity_line.line_id.activity_line.id == i.work_description.id :
+                return True
+        return False
     
+    def _check_activity_line_site_id(self,cr,uid,ids,context=None):
+        for i in self.browse(cr,uid,ids,context):
+            if i.site_id.id == i.activity_line.site_id.id :
+                            return True
+        return False
+    _constraints = [
+        (_check_work_description, 'Work description is not under Project', ['work_description']),
+        (_check_activity_line, 'Activity line is not under work description', ['activity_line']),
+        (_check_activity_line_site_id, 'This Activity line is not available for the selected site ID', ['activity_line']),
+    ]
+     
     def onchange_employee_id(self,cr,uid,ids,employee_id,context=None):
         return {
                 'value':{
                          'activity_line':False,
+                         'multiple_employees':[(5,False,False)],
                          },
                 }
     
@@ -181,7 +203,7 @@ class employee_activity(models.Model):
     site_code = fields.Char(related = "site_id.site_id",string="Site ID",readonly=True)
     work_description = fields.Many2one('project.description.line')
     description_id = fields.Many2one(relation="work.description",related="work_description.description_id",string = "Description Line Item",store=True,invisible=True)# Just for the purpose of domains
-    activity_line = fields.Many2one('activity.line.line')
+    activity_line = fields.Many2one('activity.line.line',required=True)
     state = fields.Selection([
                               ('completed','Completed'),
                               ('uncompleted','Not Completed'),
