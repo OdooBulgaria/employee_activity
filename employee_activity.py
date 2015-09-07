@@ -26,7 +26,7 @@ class employee_activity(models.Model):
                             return True
         return False
     _constraints = [
-        (_check_work_description, 'Work description is not under Project', ['work_description']),
+        (_check_work_description, 'Work description does not belong to Project selected', ['work_description']),
         (_check_activity_line, 'Activity line is not under work description', ['activity_line']),
         (_check_activity_line_site_id, 'This Activity line is not available for the selected site ID', ['activity_line']),
     ]
@@ -219,7 +219,7 @@ class employee_activity(models.Model):
     daily_allowance = fields.Float("Daily Allowance (DA)")
     lodging = fields.Float('Lodging')
     multiple_employees = fields.Many2many('hr.employee','ativity_line_hr_employee_rel','line_id','employee_id','Replicate Activity')
-    date = fields.Datetime("Date",default = datetime.now(timezone('Asia/Kolkata')).date(),required=True)
+    date = fields.Datetime("Date",default = datetime.now(),required=True)
     total_cost = fields.Float(compute="_get_total_cost",string = "Total Cost")
     circle_id = fields.Many2one(relation = 'telecom.circle',related = "project_id.circle",string = "Circle",store = True)
     local_conveyance_approved = fields.Float('Local Conveyance (LC) Approved')
