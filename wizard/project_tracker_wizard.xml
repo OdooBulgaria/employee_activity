@@ -1,0 +1,30 @@
+<openerp>
+	<data>
+		<record id = "project_tracker_report_form" model = "ir.ui.view">
+			<field name="name">Project Tracker Report</field>
+			<field name="model">project.tracker.wizard</field>
+			<field name="arch" type="xml">
+				<form string ="Report">
+					<sheet>
+						<group>
+							<field name = "project_ids" />
+						</group>
+						<footer>
+							<button name = "print_report" class = "oe_highlight" string = "Print" type="object" />
+							or
+							<button string="Cancel" class="oe_link" special="cancel"/>
+						</footer>						
+					</sheet>
+				</form>
+			</field>			
+		</record>
+		<record id = "project_tracker_report_dashboard" model="ir.actions.act_window">
+            <field name="name">Project Tracker Report</field>
+            <field name="res_model">project.tracker.wizard</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name = "target">new</field>
+         </record>		
+		<menuitem id = "subchilds_menu_project_tracker_report" name = "Print Tracker Report" parent = "pls.child_menu_dashboard" action = "project_tracker_report_dashboard" />         
+	</data>
+</openerp>
