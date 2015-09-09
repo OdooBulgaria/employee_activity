@@ -22,6 +22,9 @@ class telecom_project(models.Model):
     
     def list_circle(self,cr,uid,context=None):
         result = []
+        corporate_ids = self.pool.get("attendance.attendance")._get_user_ids_group(cr,uid,"pls","telecom_corporate")
+        if uid not in corporate_ids:
+            return result
         list_ids = self.pool.get("telecom.circle").search(cr,uid,[], offset=0, limit=None, order=None, context=None, count=False)
         ng = dict(self.pool.get('telecom.circle').name_search(cr,uid,'',[('id','in',list_ids)]))            
         if ng:
