@@ -49,6 +49,13 @@ class activity_line_line(models.Model):
             res.append((info.get('id',False),name))
         return res
 
+    def unlink(self,cr,uid,ids,context=None):
+        tracker = self.pool.get('project.tracker')
+        for id in self.browse(cr,uid,ids,context):
+            if id.tracker_line_id:
+                tracker.unlink(cr,uid,[id.tracker_line_id.id])
+        return super(activity_line_line,self).unlink(cr,uid,ids,context)
+    
     def create(self,cr,uid,vals,context=None):
         line_item_id=vals.get('line_id',False)
         activity_line_obj=self.pool.get('activity.line').browse(cr,uid,line_item_id,context)
@@ -78,5 +85,5 @@ class activity_line_line(models.Model):
 #     earned = fields.Float(compute = _get_total_earned,string = "Earning")
     employee_activity_line = fields.One2many('employee.activity.line','activity_line',"Activities")
     total_cost = fields.Float(compute = _compute_total_cost,string = "Total Expenses")
-    tracker_line_id = fields.Many2one('project.tracker',string='Tracker Line',ondelete="cascade",required=True)
+    tracker_line_id = fields.Many2one('project.tracker',string='Tracker Line',ondelete="cascade",required=True,select=True)
     earned_amount = fields.Float(compute = "_get_amount_earned",string = "Earnings")
