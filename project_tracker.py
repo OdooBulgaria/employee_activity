@@ -14,7 +14,6 @@ class project_tracker(osv.osv):
                             record.tracker_line_id.id:map(lambda x:x.employee_id.id,record.employee_activity_line)
                             })
         
-        print "=============================================res",res
         return res
          
     _columns={
