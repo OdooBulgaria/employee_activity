@@ -22,7 +22,7 @@ class project_tracker(osv.osv):
               'po_status':fields.selection(string='PO Status',selection=[('Available','Available'),
                                                                     ('Not Available','Not Available'),
                                                                     ]),
-              'activity_planned':fields.many2one('activity.line',string='Activity Planned'),
+              'activity_planned':fields.many2one('activity.line',string='Activity Planned',ondelete="cascade",required=True,select=True),
               'per_unit_price':fields.float(string='Per unit Price'),
               'done_by':fields.function(_get_employees_id,string = "Done By",type="many2many",relation="hr.employee"),
               'activity_start_date':fields.datetime(string='Activity Start Date'),
