@@ -32,6 +32,7 @@
     'website': 'www.jginfosystems.com',
     'depends': ['base','pls','hr'],
     'data': [
+             'employee_activity_data.xml',
              'employee_activity.xml',
              'security/ir.model.access.csv',
              'activity_sequence.xml',
