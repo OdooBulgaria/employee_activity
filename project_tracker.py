@@ -11,9 +11,10 @@ class project_tracker(osv.osv):
         for record in line_obj.browse(cr,uid,line,context):
             for activity in record.employee_activity_line:
                 res.update({
-                            record.tracker_line_id.id:map(lambda x:activity.employee_id.id,activity)
+                            record.tracker_line_id.id:map(lambda x:x.employee_id.id,record.employee_activity_line)
                             })
         
+        print "=============================================res",res
         return res
          
     _columns={
