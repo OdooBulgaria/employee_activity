@@ -162,5 +162,32 @@
       	<menuitem id = "menu_employee_activity_childs" name = "Employee Activities" parent = "menu_action_plan_parent" sequence="0" groups = "pls.telecom_corporate"/>
       	<menuitem id = "menu_employee_activity_subchilds" name = "Employee Activities" parent = "menu_employee_activity_childs" action = "action_employee_activity_line" />
       	
+      	<record id="action_employee_activity_line_past_24hr" model="ir.actions.act_window">
+            <field name="name">24 Hours </field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">employee.activity.line</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_employee_activity_corporate_tree"/>
+            <field name="view_mode">tree,form</field>
+          <!--   <field name="context">{'search_default_my_sale_orders_filter': 1}</field>  -->
+            <field name="domain">[('is_mail_sent_24','=',True),('is_mail_sent_48','!=',True)]</field>
+        </record>
+        
+		<menuitem id = "menu_delayed_activity_childs" name = "Delayed Activities" parent = "menu_action_plan_parent" sequence="1" />
+        <menuitem id="menu_delayed_activity_subchilds_24hr" action="action_employee_activity_line_past_24hr" parent="menu_delayed_activity_childs" sequence="5"/>
+        
+        <record id="action_employee_activity_line_past_48hr" model="ir.actions.act_window">
+            <field name="name">48 Hours </field>
+            <field name="type">ir.actions.act_window</field>
+            <field name="res_model">employee.activity.line</field>
+            <field name="view_type">form</field>
+            <field name="view_id" ref="view_employee_activity_corporate_tree"/>
+            <field name="view_mode">tree,form</field>
+          <!--   <field name="context">{'search_default_my_sale_orders_filter': 1}</field>  -->
+            <field name="domain">[('is_mail_sent_48','=',True)]</field>
+        </record>
+
+        <menuitem id="menu_delayed_activity_subchilds_48hr" action="action_employee_activity_line_past_48hr" parent="menu_delayed_activity_childs" sequence="6"/>
+
 	</data>
 </openerp>

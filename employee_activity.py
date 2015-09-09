@@ -3,10 +3,76 @@ from openerp import SUPERUSER_ID
 from datetime import datetime
 from pytz import timezone
 from openerp.exceptions import except_orm
+import time
 
 class employee_activity(models.Model):
     _name = "employee.activity.line"
     _description = "Employee Activity Line"
+    
+    def run_cron_employee_activity_line(self,cr,uid,ids=None,context=None):
+        print "in run_cron_employee_activity_line------------------------------------",ids
+        current_timedate = datetime.now()
+        mail_obj=self.pool.get('mail.mail')
+        send_mail=[]
+        line_ids=self.search(cr, uid, args=[], offset=0, limit=None, order=None, context=None, count=False)
+        print "line_ids-----------------------------------",line_ids
+        overly_aged={}
+        if line_ids:
+            groups = self.pool.get('ir.model.data').get_object_reference(cr, uid,'pls','telecom_corporate')[1]
+            user_group = self.pool.get('res.groups').browse(cr,uid,groups)
+            user_ids = map(int,user_group.users or [])
+            corporate_ids = []
+            if user_ids:
+                for j in user_ids:
+                    corporate_ids.append(self.pool.get('res.users').read(cr,uid,j,['partner_id'],context=None).get('partner_id',False)[0])
+            for i in line_ids:
+                line_obj=self.browse(cr,uid,i,context=None)
+                activity_date=line_obj.date
+                time_diff = current_timedate - datetime.strptime(activity_date,"%Y-%m-%d %H:%M:%S")
+                aging24 = divmod(time_diff.days*86400 + time_diff.seconds,86400)
+                if line_obj.is_mail_sent_48 != True and aging24[0] > 2 :
+                    email_to_ids = []
+                    email_to_ids = email_to_ids + corporate_ids
+                    str1 = "This activity was created "+str(aging24[0])+" days "+str(aging24[1]/3600)+" hours "+str((aging24[1]%3600)/60)+" minutes ago on "+activity_date+\
+                    "\n\nActivity Line : "+ line_obj.name +"\nResponsible Employee : "+line_obj.employee_id.name+ "\nSite Name: "+line_obj.site_id.name + "\nSite ID: "+line_obj.site_code+"\n\nPlease take immediate action"
+                    overly_aged.update({i:str1})
+                    project_managers_ids=line_obj.project_id.project_manager
+                    if project_managers_ids:
+                        for pm_id in project_managers_ids:
+                            email_to_ids.append(pm_id.user_id.partner_id.id)
+                    email_to_ids = list(set(email_to_ids))
+                    mail_id=mail_obj.create(cr,uid,{
+                                                  'subject':line_obj.name+ " - Employee Activity Line Exceeded 48 hours Limit",
+                                                  'recipient_ids':[(6,0,email_to_ids)],
+                                                  'body_html':str1,
+                                                 },context=None)
+                    send_mail.append(mail_id)
+                    self.write(cr,uid,i,{'state':'uncompleted','is_mail_sent_48':True},context)
+                    print "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^line_obj.is_mail_sent_24,48888888888888",line_obj.id,line_obj.is_mail_sent_24,line_obj.is_mail_sent_48
+                elif line_obj.is_mail_sent_24 != True and aging24[0]>0 and aging24[0] < 2 :
+                    email_to_ids = []
+                    email_to_ids = email_to_ids + corporate_ids
+                    str1 = "This activity was created "+str(aging24[0])+" days "+str(aging24[1]/3600)+" hours "+str((aging24[1]%3600)/60)+" minutes ago on "+activity_date+\
+                    "\n\nActivity Line : "+ line_obj.name +"\nResponsible Employee : "+line_obj.employee_id.name+ "\nSite Name: "+line_obj.site_id.name + "\nSite ID: "+line_obj.site_code+"\n\nPlease take the necessary action"
+                    overly_aged.update({i:str1})
+                    project_managers_ids=line_obj.project_id.project_manager
+                    if project_managers_ids:
+                        for pm_id in project_managers_ids:
+                            email_to_ids.append(pm_id.user_id.partner_id.id)
+                    email_to_ids = list(set(email_to_ids))
+                    print "email_to_ids---------------------------------------------",email_to_ids
+                    mail_id=mail_obj.create(cr,uid,{
+                                                  'subject':line_obj.name+ " - Employee Activity Line Exceeded Time Limit",
+                                                  'recipient_ids':[(6,0,email_to_ids)],
+                                                  'body_html':str1,
+                                                 },context=None)
+                    send_mail.append(mail_id)
+                    self.write(cr,uid,i,{'is_mail_sent_24':True},context)
+                    print "^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^line_obj.is_mail_sent_244444444444444",line_obj.id,line_obj.is_mail_sent_24,line_obj.is_mail_sent_48
+        print "the dict of over aged employee activity line-------------------------------------------------\n",overly_aged
+        mail_obj.send(cr, uid, send_mail, auto_commit=False, raise_exception=False, context=None)
+        print "-------------------------------------------------------------------------------------------------------------",send_mail
+        return True
     
     def _check_work_description(self,cr,uid,ids,context=None):
         for i in self.browse(cr,uid,ids,context):
@@ -226,3 +292,5 @@ class employee_activity(models.Model):
     travelling_allowance_approved = fields.Float("Travelling Allowance Approved")
     daily_allowance_approved = fields.Float("Daily Allowance Approved")
     lodging_approved = fields.Float("Lodging Approved")
+    is_mail_sent_24 = fields.Boolean("Is mail sent",default = False)
+    is_mail_sent_48 = fields.Boolean("Is mail sent",default = False)
