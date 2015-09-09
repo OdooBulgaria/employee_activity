@@ -5,6 +5,30 @@ class telecom_project(models.Model):
     _inherit = "telecom.project"
     _description = "Activity Functionality"
     employee_activity_lines = fields.One2many('employee.activity.line','project_id')
+
+    def list_project(self, cr, uid, context=None):
+        result = []
+        list_ids = self.pool.get('attendance.attendance').fetch_ids_user(cr,uid,context)
+        if list_ids:
+            ng = dict(self.pool.get('telecom.project').name_search(cr,uid,'',[('id','in',list_ids[0][2])]))
+        else:
+            list_ids = self.pool.get("telecom.project").search(cr,uid,[], offset=0, limit=None, order=None, context=None, count=False)
+            ng = dict(self.pool.get('telecom.project').name_search(cr,uid,'',[('id','in',list_ids)]))            
+        if ng:
+            ids = ng.keys()
+            for project in self.pool.get('telecom.project').browse(cr, uid, ids, context=context):
+                result.append((project.id,ng[project.id]))
+        return result
+    
+    def list_circle(self,cr,uid,context=None):
+        result = []
+        list_ids = self.pool.get("telecom.circle").search(cr,uid,[], offset=0, limit=None, order=None, context=None, count=False)
+        ng = dict(self.pool.get('telecom.circle').name_search(cr,uid,'',[('id','in',list_ids)]))            
+        if ng:
+            ids = ng.keys()
+            for circle in self.pool.get('telecom.circle').browse(cr, uid, ids, context=context):
+                result.append((circle.id,ng[circle.id]))
+        return result        
                 
 
 class activity_line_line(models.Model):

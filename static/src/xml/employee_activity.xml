@@ -8,6 +8,11 @@
 		                <select class = "oe_select" id ="project_id">
 						</select>
 				</div>			
+	            <div class="oe_form_dropdown_section" > <!-- clear_group is so that all the three elements can be cleared at once -->
+		                <h4>Circle :</h4> 
+		                <select class = "oe_select" id ="circle_id">
+						</select>
+				</div>							
 			</t>
 		</div>
 	</t>

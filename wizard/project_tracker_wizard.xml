@@ -7,7 +7,23 @@
 				<form string ="Report">
 					<sheet>
 						<group>
-							<field name = "project_ids" />
+							<field name = "choice_selection" />
+						</group>
+						<group col="4">
+							<group colspan="2">
+								<field name = "project_ids" attrs = "{'invisible':[('choice_selection','=','circle')]}">
+									<tree string = "Projects">
+										<field name = "name" />
+									</tree>
+								</field>
+							</group>
+							<group colspan="2">
+								<field name = "circle_ids" attrs = "{'invisible':[('choice_selection','=','project')]}">
+									<tree string = "Circles">
+										<field name ="name" />
+									</tree>								
+								</field>	
+							</group>						
 						</group>
 						<footer>
 							<button name = "print_report" class = "oe_highlight" string = "Print" type="object" />
@@ -25,6 +41,6 @@
             <field name="view_mode">form</field>
             <field name = "target">new</field>
          </record>		
-		<menuitem id = "subchilds_menu_project_tracker_report" name = "Print Tracker Report" parent = "pls.child_menu_dashboard" action = "project_tracker_report_dashboard" />         
+		<menuitem id = "subchilds_menu_project_tracker_report" name = "Print Tracker Report" groups = "pls.telecom_corporate" parent = "pls.child_menu_dashboard" action = "project_tracker_report_dashboard" />         
 	</data>
 </openerp>

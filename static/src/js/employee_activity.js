@@ -10,24 +10,37 @@ openerp.employee_activity = function(instance, local) {
             this._super.apply(this, arguments);
             var self = this;
             self.current_project= null;
+            self.current_circle = null;
             self.project_list_sorted = [];
-		},
+            self.circle_list_sorted = []
+            self.defs = []
+    	},
     	start:function(){
     		var self = this;
     		var defs = []
-    		self.d = $.Deferred();
+    		self.project_d = $.Deferred();
+    		self.circle_d = $.Deferred();
             return this._super.apply(this, arguments).then(function(){
             	self.$el.parent().prepend(QWeb.render("project_tracker_dashboard", {widget: this}));
-                self.$el.parent().find('.oe_select').change(function() {
+                self.$el.parent().find('select#project_id').change(function() {
                 		self.current_project = this.value === '' ? null : parseInt(this.value);
     	                self.do_search(self.last_domain, self.last_context, self.last_group_by);
     	            });            	
+                self.$el.parent().find('select#circle_id').change(function() {
+            		self.current_circle = this.value === '' ? null : parseInt(this.value);
+	                self.do_search(self.last_domain, self.last_context, self.last_group_by);
+	            });            	                
             	var mod = new instance.web.Model("telecom.project", self.dataset.context, self.dataset.domain);
-                defs.push(mod.call("list_project", []).then(function(result) {
-                	self.project = result
-                	self.d.resolve();
+                self.defs.push(mod.call("list_project", []).then(function(result) {
+                	self.project = result;
+                	self.project_d.resolve();
+                	
                 }));
-                return $.when(defs)
+                self.defs.push(mod.call("list_circle", []).then(function(result) {
+                	self.circle = result;
+                	self.circle_d.resolve()
+                }));                
+                return $.when(self.defs)
             });  		
     	},
     	
@@ -41,17 +54,26 @@ openerp.employee_activity = function(instance, local) {
             var o;
             self.$el.parent().find('.oe_select').children().remove().end();
             self.$el.parent().find('.oe_select').append(new Option('', ''));
-            $.when(self.d).then(function(){
-                if (self.project){
+            $.when(self.project_d,self.circle_d).then(function(){
+                console.log("=============================2");
+            	if (self.project){
                     for (var i = 0;i < self.project.length;i++){
                     	self.project_list_sorted.push(self.project[i][0]);
                     	o = new Option(self.project[i][1], self.project[i][0]);
-                        self.$el.parent().find('.oe_select').append(o);
+                        self.$el.parent().find('select#project_id').append(o);
                     }            	
-                    self.$el.parent().find('.oe_select')[0].value = self.current_project;
+                    self.$el.parent().find('select#project_id')[0].value = self.current_project;
                 }                        	
+                if (self.circle){
+                    for (var i = 0;i < self.circle.length;i++){
+                    	self.circle_list_sorted.push(self.circle[i][0]);
+                    	o = new Option(self.circle[i][1], self.circle[i][0]);
+                        self.$el.parent().find('select#circle_id').append(o);
+                    }            	
+                    self.$el.parent().find('select#circle_id')[0].value = self.current_circle;
+                }                 
+                return self.search_by_project_id();
             });
-            return self.search_by_project_id();    		
     	},
     	
     	search_by_project_id: function() {
@@ -68,6 +90,10 @@ openerp.employee_activity = function(instance, local) {
             if (self.current_project!== null) domain.push(['project_id','=',self.current_project]);
             else{
             	domain.push(["project_id", "in", self.project_list_sorted]);
+            }
+            if (self.current_circle !== null) domain.push(['project_id.circle','=',self.current_circle]);
+            else{
+            	domain.push(["project_id.circle", "in", self.circle_list_sorted]);
             }
             self.last_context["project_id"] = self.current_project === null ? false : self.current_project;
             var compound_domain = new instance.web.CompoundDomain(self.last_domain, domain);
