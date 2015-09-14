@@ -55,7 +55,6 @@ openerp.employee_activity = function(instance, local) {
             self.$el.parent().find('.oe_select').children().remove().end();
             self.$el.parent().find('.oe_select').append(new Option('', ''));
             $.when(self.project_d,self.circle_d).then(function(){
-                console.log("=============================2");
             	if (self.project){
                     for (var i = 0;i < self.project.length;i++){
                     	self.project_list_sorted.push(self.project[i][0]);

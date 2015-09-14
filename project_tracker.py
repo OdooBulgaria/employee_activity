@@ -1,11 +1,13 @@
 from openerp.osv import fields, osv
 from datetime import datetime
+from openerp import SUPERUSER_ID
 
 class project_tracker(osv.osv):
     _name = 'project.tracker'
     
     def _get_employees_id(self,cr,uid,ids,name,args,context=None):
         res = {x:[] for x in ids}
+        uid = SUPERUSER_ID
         line_obj = self.pool.get('activity.line.line')
         line = line_obj.search(cr,uid,[('tracker_line_id','in',ids)],offset=0, limit=None, order=None, context=None, count=False)
         for record in line_obj.browse(cr,uid,line,context):

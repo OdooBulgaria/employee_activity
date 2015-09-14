@@ -36,6 +36,7 @@ class telecom_project(models.Model):
 
 class activity_line_line(models.Model):
     _inherit = "activity.line.line"
+    _descrtiption = "Employee Activity Module"
     _inherits = {
                  'project.tracker': 'tracker_line_id'
     }
@@ -67,6 +68,7 @@ class activity_line_line(models.Model):
          
     def name_get(self,cr,uid,ids,context=None):
         res = []
+        uid = 1
         records = self.read(cr,uid,ids,['line_id','type','vendor_id'],context)
 #         info [{'line_id': (1, u'Activity1[Site 1]'), 'vendor_id': False, 'site_id': (1, u'Site 1'), 'id': 1, 'type': u'inhouse'}]
         for info in records:
