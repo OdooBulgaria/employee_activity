@@ -90,8 +90,6 @@ class activity_line_line(models.Model):
         activity_line_obj=self.pool.get('activity.line').browse(cr,uid,line_item_id,context)
         tracker_id=self.pool.get('project.tracker').create(cr,uid,{
               'work_description_id':activity_line_obj.activity_line.description_id.id,
-              'IPR_no':False,
-              'IPR_date':False,
               'site_id': vals.get('site_id',False),
               'site_name':vals.get('site_id',False) and self.pool.get('project.site').browse(cr,uid,vals.get('site_id'),context) or False,
               'po_status':False,

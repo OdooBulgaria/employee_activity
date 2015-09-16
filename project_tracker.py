@@ -5,6 +5,14 @@ from openerp import SUPERUSER_ID
 class project_tracker(osv.osv):
     _name = 'project.tracker'
     
+    def create(self,cr,uid,vals,context=None):
+        print "vals====================",vals
+        if vals.get('IPR_no','/')=='/':
+            vals['IPR_no']=self.pool.get('ir.sequence').get(cr,uid,'Project.Tracker.IPR.No',context=None) or '/'
+            print "valssssssssssssssss----------",vals
+        print "in sequnece====================================================",vals
+        return super(project_tracker,self).create(cr,uid,vals,context=None)
+    
     def _get_employees_id(self,cr,uid,ids,name,args,context=None):
         res = {x:[] for x in ids}
         uid = SUPERUSER_ID
@@ -19,7 +27,7 @@ class project_tracker(osv.osv):
         return res
          
     _columns={
-              'IPR_no':fields.char('IPR No'),
+              'IPR_no':fields.char('IPR No',readonly=True),
               'IPR_date':fields.datetime(string='IPR Date'),
               'po_status':fields.selection(string='PO Status',selection=[('Available','Available'),
                                                                     ('Not Available','Not Available'),
@@ -36,3 +44,7 @@ class project_tracker(osv.osv):
               'cql_approval_status':fields.selection(string='IM Approval Status',selection=[('yes','Yes'),('no','No')]),
               'pd_approval_status':fields.selection(string='PD Approval Status',selection=[('yes','Yes'),('no','No')]),
               }
+    _defaults = {
+                'IPR_no':'/',
+                'IPR_date':datetime.now(),
+                }
