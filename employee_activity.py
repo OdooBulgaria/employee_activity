@@ -10,6 +10,7 @@ class employee_activity(models.Model):
     _description = "Employee Activity Line"
     
     def run_cron_employee_activity_line(self,cr,uid,ids=None,context=None):
+        print "============================================run_cron"
         current_timedate = datetime.now()
         mail_obj=self.pool.get('mail.mail')
         send_mail=[]
@@ -151,6 +152,7 @@ class employee_activity(models.Model):
         return res
     
     def create(self,cr,uid,vals,context=None):
+        print "===========================vals",vals
         vals['name'] = self.pool.get('ir.sequence').get(cr, uid, 'employee.activity.line') or '/'
         if not vals.get('date',False):
             vals.update({'date':datetime.now(timezone('Asia/Kolkata'))})
@@ -269,7 +271,7 @@ class employee_activity(models.Model):
                               ('uncompleted','Not Completed'),
                               ('wip',"WIP"),
                               ('unattempted',"Not Attempted"),
-                              ],string = "Status",default = "wip")
+                              ],string = "Status",default = "draft")
     remarks = fields.Text('Remarks')
     reporting_time_site = fields.Datetime('Reporting Time on Site')
     return_time_site = fields.Datetime('Returning Time from Site')

@@ -27,7 +27,7 @@ class project_tracker(osv.osv):
         return res
          
     _columns={
-              'IPR_no':fields.char('IPR No',readonly=True),
+              'IPR_no':fields.char('IPR No'),
               'IPR_date':fields.datetime(string='IPR Date'),
               'po_status':fields.selection(string='PO Status',selection=[('Available','Available'),
                                                                     ('Not Available','Not Available'),

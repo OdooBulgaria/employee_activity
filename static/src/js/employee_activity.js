@@ -263,7 +263,7 @@ openerp.employee_activity = function(instance, local) {
                 	'return_time_site':false,
                 	'travelling_allowance':false,
                 	'lodging':false,
-                	'state':"wip",
+                	'state':"draft",
     		}
     	},
     	show_activities:function(event){
@@ -378,25 +378,19 @@ openerp.employee_activity = function(instance, local) {
                             type: "many2one",
                         },    					
     				},
-    				state: {
-                        id: "state",
-                        index:4 ,
-                        corresponding_property: "state",
-                        label: _t("Status"),
+                    IPR_no:{
+                        id: "IPR_no",
+                        index: 4,
+                        corresponding_property: "IPR_no",
+                        label: _t("IPR NO."),
                         required: true,
                         tabindex: 2,
-                        constructor: instance.web.form.FieldSelection,
+                        constructor: instance.web.form.FieldChar,
                         field_properties: {
-                            string: _t("Status"),
-                            type: "selection",
-                            selection:[
-                                       ['completed','Completed'],
-                                       ['uncompleted','Not Completed'],
-                                       ['wip',"WIP"],
-                                       ['unattempted',"Not Attempted"],
-                                       ],
-                        },
-                    },
+                            string: _t("IPR No."),
+                            type: "char",
+                        },                    	
+                    },                    
     				current_location:{
                         id: "current_location",
                         index: 5,
@@ -439,13 +433,26 @@ openerp.employee_activity = function(instance, local) {
 		                        domain:[['line_id.activity_line.description_id','=',false]],
 		                    },
 						},
-	    				site_code:{
-	                        id: "site_code",
+						remarks: {
+	                        id: "remarks",
 	                        index: 8,
+	                        corresponding_property: "remarks",
+	                        label: _t("Remarks"),
+	                        required: true,
+	                        tabindex: 6,
+	                        constructor: instance.web.form.FieldChar,
+	                        field_properties: {
+	                            string: _t("Remarks"),
+	                            type: "char",
+	                        },
+	                    },						
+						site_code:{
+	                        id: "site_code",
+	                        index: 9,
 	                        corresponding_property: "site_code",
 	                        label: _t("Site ID"),
 	                        required: true,
-	                        tabindex: 6,
+	                        tabindex: 7,
 	                        constructor: instance.web.form.FieldChar,
 	                        field_properties: {
 	                        	string: _t("Site ID"),
@@ -453,19 +460,6 @@ openerp.employee_activity = function(instance, local) {
 	                    	},    					
 	    				},    				
 						
-					remarks: {
-                        id: "remarks",
-                        index: 9,
-                        corresponding_property: "remarks",
-                        label: _t("Remarks"),
-                        required: true,
-                        tabindex: 7,
-                        constructor: instance.web.form.FieldChar,
-                        field_properties: {
-                            string: _t("Remarks"),
-                            type: "char",
-                        },
-                    },						
                     reporting_time_site: {
                         id: "reporting_time_site",
                         index: 10,
@@ -558,8 +552,28 @@ openerp.employee_activity = function(instance, local) {
 	                        string: _t("Replicate Activity"),
 	                        type: "many2many",
 	                        domain:[['emp_type','=',parent.type],['id','!=',employee_id]],
-	                    },                    	
+	                    },
                     },
+    				state: {
+                        id: "state",
+                        index:17 ,
+                        corresponding_property: "state",
+                        label: _t("Status"),
+                        required: true,
+                        tabindex: 15,
+                        constructor: instance.web.form.FieldSelection,
+                        field_properties: {
+                            string: _t("Status"),
+                            type: "selection",
+                            selection:[
+                                       ['draft','Draft'],
+                                       ['completed','Completed'],
+                                       ['uncompleted','Not Completed'],
+                                       ['wip',"WIP"],
+                                       ['unattempted',"Not Attempted"],
+                                       ],
+                        },
+                    },                    
                 };
     	},
     	create_cancel:function(){
@@ -575,8 +589,10 @@ openerp.employee_activity = function(instance, local) {
     		activity_line = new openerp.Model('employee.activity.line');
     		if (self.mode == "edit"){
     			activity_line.call('write', [self.line.id,{
+    				'state':self.state_field.get("value"),
     				'site_id':self.site_id_field.get("value"),
-                	'remarks':self.remarks_field.get("value"),
+                	'IPR_no':self.IPR_no_field.get("value"),
+    				'remarks':self.remarks_field.get("value"),
                 	'distance_site_location':self.distance_site_location_field.get("value"),
                 	'daily_allowance':self.daily_allowance_field.get("value"),
                 	'current_location':self.current_location_field.get("value"),
@@ -596,9 +612,10 @@ openerp.employee_activity = function(instance, local) {
     			   alert("You are required to assign an activity and work description");
     			   return;
 			   
-    		   } 
+    		   }
     		   activity_line.call('create', [{
        			'activity_line':self.line.activity_line || false,
+       			'IPR_no':self.line.IPR_no || '',
        			'work_description':self.line.work_description || false,
        			'project_id':self.project_id[0],
        			'employee_id':self.employee_id,
@@ -695,10 +712,6 @@ openerp.employee_activity = function(instance, local) {
                 self.create_form.push(field);
                 field.set_value(self.line[field.name]);
                 
-                if (self.mode != "create" && (field.name == "work_description" || field.name == "activity_line")  ){
-                	field.modifiers.readonly = true;
-                }
-
                 // on update : change the last created line
                 field.corresponding_property = field_data.corresponding_property;
                 
@@ -728,6 +741,11 @@ openerp.employee_activity = function(instance, local) {
                 if (field_data.id == 'multiple_employees') {
                 	$field_container.find('td').css('width','150px')
                 }
+                if (self.mode != "create" && (field.name == "work_description" || field.name == "activity_line" || field.name == "site_code"
+            		|| field.name == "site_id")){
+                	field.modifiers.readonly = true;
+                	$field_container.find('td.create_account_container').css('width','160px');
+                }                
                 field.appendTo($field_container.find("td"));
                 $super_container.find('div.oe_form').prepend($field_container);
     
@@ -774,9 +792,13 @@ openerp.employee_activity = function(instance, local) {
     	},
     	open_line_form:function(event){
     		var self = this
-    		$(event.srcElement).removeClass('toggle_match');
-    		$(event.srcElement).addClass('toggle_create');
-    		self.$super_container.show("300ms");
+    		var mod = new instance.web.Model("employee.activity.line");
+    		mod.call("read", [self.line.id,['IPR_no']]).then(function(result){
+    			self.IPR_no_field.set_value(result['IPR_no']) //working
+    			$(event.srcElement).removeClass('toggle_match');
+        		$(event.srcElement).addClass('toggle_create');
+        		self.$super_container.show("300ms");    			
+    		})
     	},
     	close_line_form:function(event){
     		var self = this

@@ -46,7 +46,7 @@
             <div class="oe_form_dropdown_section">
 	                <h4>Status :</h4> 
 	                <select class = "oe_select_selection" id = "state">
-	                	<option></option>
+						<option value="draft">Draft</option>
 						<option value="completed">Completed</option>
 						<option value="uncompleted">Not Completed</option>
 						<option value="wip">WIP</option>
