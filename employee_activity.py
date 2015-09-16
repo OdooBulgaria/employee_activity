@@ -251,6 +251,7 @@ class employee_activity(models.Model):
             self.total_cost = self.activity_line.cost + total_cost 
     
     name = fields.Char("Sequence",readonly="1")
+    IPR_no = fields.Char(string='IPR No.',store=True,related='activity_line.tracker_line_id.IPR_no',relation='project.tracker')
     employee_id = fields.Many2one('hr.employee',string = "Employee",required=True)
     emp_type = fields.Selection(related = "employee_id.emp_type",string = 'Employee Type',store=True,readonly=True)
     job_id = fields.Many2one(relation = 'hr.job',related = "employee_id.job_id",string = "Designation",store = True)
@@ -263,7 +264,7 @@ class employee_activity(models.Model):
     work_description = fields.Many2one('project.description.line')
     description_id = fields.Many2one(relation="work.description",related="work_description.description_id",string = "Description Line Item",store=True,invisible=True)# Just for the purpose of domains
     activity_line = fields.Many2one('activity.line.line',required=True)
-    state = fields.Selection([
+    state = fields.Selection([('draft','Draft'),
                               ('completed','Completed'),
                               ('uncompleted','Not Completed'),
                               ('wip',"WIP"),
@@ -287,3 +288,4 @@ class employee_activity(models.Model):
     lodging_approved = fields.Float("Lodging Approved")
     is_mail_sent_24 = fields.Boolean("Is mail sent",default = False)
     is_mail_sent_48 = fields.Boolean("Is mail sent",default = False)
+    
