@@ -1,5 +1,5 @@
 <openerp>
-	<data noupdate="0">
+	<data noupdate="1">
 		<!-- Creating cron jobs for the employee_activity_line -->
        <record id = "employee_activity_cron_job" model = "ir.cron">
        	<field name = "name">Aging of Employee Activity</field>

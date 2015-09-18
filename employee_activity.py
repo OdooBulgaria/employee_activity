@@ -10,7 +10,7 @@ class employee_activity(models.Model):
     _description = "Employee Activity Line"
     
     def run_cron_employee_activity_line(self,cr,uid,ids=None,context=None):
-        print "============================================run_cron"
+        print "============================================run_cron start 24 48"
         current_timedate = datetime.now()
         mail_obj=self.pool.get('mail.mail')
         send_mail=[]
@@ -32,8 +32,8 @@ class employee_activity(models.Model):
                 if line_obj.is_mail_sent_48 != True and aging24[0] > 2 :
                     email_to_ids = []
                     email_to_ids = email_to_ids + corporate_ids
-                    str1 = "This activity was created "+str(aging24[0])+" days "+str(aging24[1]/3600)+" hours "+str((aging24[1]%3600)/60)+" minutes ago on "+activity_date+\
-                    "\n\nActivity Line : "+ line_obj.name +"\nResponsible Employee : "+line_obj.employee_id.name+ "\nSite Name: "+line_obj.site_id.name + "\nSite ID: "+line_obj.site_code+"\n\nPlease take immediate action"
+                    str1 = ""
+                    str1 = "This activity was created ",(aging24[0])," days ",(aging24[1]/3600)," hours ",((aging24[1]%3600)/60)," minutes ago on ",activity_date,"\n\nActivity Line : ",line_obj.name ,"\nResponsible Employee : ",line_obj.employee_id.name, "\nSite Name: ",line_obj.site_id.name , "\nSite ID: ",line_obj.site_code,"\n\nPlease take immediate action"
                     overly_aged.update({i:str1})
                     project_managers_ids=line_obj.project_id.project_manager
                     if project_managers_ids:
@@ -50,8 +50,7 @@ class employee_activity(models.Model):
                 elif line_obj.is_mail_sent_24 != True and aging24[0]>0 and aging24[0] < 2 :
                     email_to_ids = []
                     email_to_ids = email_to_ids + corporate_ids
-                    str1 = "This activity was created "+str(aging24[0])+" days "+str(aging24[1]/3600)+" hours "+str((aging24[1]%3600)/60)+" minutes ago on "+activity_date+\
-                    "\n\nActivity Line : "+ line_obj.name +"\nResponsible Employee : "+line_obj.employee_id.name+ "\nSite Name: "+line_obj.site_id.name + "\nSite ID: "+line_obj.site_code+"\n\nPlease take the necessary action"
+                    str1 = "This activity was created ",aging24[0]," days ",(aging24[1]/3600)," hours ",((aging24[1]%3600)/60)," minutes ago on ",activity_date,"\n\nActivity Line : ", line_obj.name ,"\nResponsible Employee : ",line_obj.employee_id.name, "\nSite Name: ",line_obj.site_id.name , "\nSite ID: ",line_obj.site_code,"\n\nPlease take the necessary action"
                     overly_aged.update({i:str1})
                     project_managers_ids=line_obj.project_id.project_manager
                     if project_managers_ids:
@@ -66,6 +65,7 @@ class employee_activity(models.Model):
                     send_mail.append(mail_id)
                     self.write(cr,uid,i,{'is_mail_sent_24':True},context)
         mail_obj.send(cr, uid, send_mail, auto_commit=False, raise_exception=False, context=None)
+        print "============================================run_cron stop 24 48"
         return True
     
     def _check_work_description(self,cr,uid,ids,context=None):
