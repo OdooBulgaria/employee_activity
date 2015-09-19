@@ -105,7 +105,7 @@
 						</field>					
 					</page>
                    	<page string="Project Tracker">
-	                	<field name="activity_tracker_ids">
+ 	                	<field name="activity_tracker_ids">
 	                		<tree create="false" >
 	                			<field name="work_description"/>
 	                			<field name="activity_planned"/>
@@ -123,12 +123,13 @@
 	                			<field name="activity_start_date"/>
 	                			<field name = "activity_end_date" />
 	                		</tree>
-	                	</field>
+	                	</field> 
                    	</page>
 				</xpath>
 
 				<xpath expr = "/form/notebook/page[@string='Work Description']/field[@name='line_id']/form/sheet/group/field[@name='activity_ids']/form/sheet/group/field[@name='activity_line_line']/tree/field[@name='type']" position="before">
 					<field name = "done_by" widget = "many2many_tags" />
+					<field name = "IPR_no" />
 				</xpath>
             </field>
 		</record>

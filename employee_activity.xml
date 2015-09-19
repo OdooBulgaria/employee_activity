@@ -175,8 +175,8 @@
             <field name="domain">[('is_mail_sent_24','=',True),('is_mail_sent_48','!=',True)]</field>
         </record>
         
-		<menuitem id = "menu_delayed_activity_childs" name = "Delayed Activities" parent = "menu_action_plan_parent" sequence="1" />
-        <menuitem id="menu_delayed_activity_subchilds_24hr" action="action_employee_activity_line_past_24hr" parent="menu_delayed_activity_childs" sequence="5"/>
+		<menuitem id = "menu_delayed_activity_childs" groups = "pls.telecom_corporate" name = "Delayed Activities" parent = "menu_action_plan_parent" sequence="1" />
+        <menuitem id="menu_delayed_activity_subchilds_24hr" groups = "pls.telecom_corporate" action="action_employee_activity_line_past_24hr" parent="menu_delayed_activity_childs" sequence="5"/>
         
         <record id="action_employee_activity_line_past_48hr" model="ir.actions.act_window">
             <field name="name">48 Hours </field>
@@ -189,7 +189,7 @@
             <field name="domain">[('is_mail_sent_48','=',True)]</field>
         </record>
 
-        <menuitem id="menu_delayed_activity_subchilds_48hr" action="action_employee_activity_line_past_48hr" parent="menu_delayed_activity_childs" sequence="6"/>
+        <menuitem id="menu_delayed_activity_subchilds_48hr" groups = "pls.telecom_corporate" action="action_employee_activity_line_past_48hr" parent="menu_delayed_activity_childs" sequence="6"/>
 
 	</data>
 </openerp>

@@ -22,9 +22,9 @@ class telecom_project(models.Model):
     
     def list_circle(self,cr,uid,context=None):
         result = []
-        corporate_ids = self.pool.get("attendance.attendance")._get_user_ids_group(cr,uid,"pls","telecom_corporate")
-        if uid not in corporate_ids:
-            return result
+#         corporate_ids = self.pool.get("attendance.attendance")._get_user_ids_group(cr,uid,"pls","telecom_corporate")
+#         if uid not in corporate_ids:
+#             return result
         list_ids = self.pool.get("telecom.circle").search(cr,uid,[], offset=0, limit=None, order=None, context=None, count=False)
         ng = dict(self.pool.get('telecom.circle').name_search(cr,uid,'',[('id','in',list_ids)]))            
         if ng:
@@ -32,11 +32,10 @@ class telecom_project(models.Model):
             for circle in self.pool.get('telecom.circle').browse(cr, uid, ids, context=context):
                 result.append((circle.id,ng[circle.id]))
         return result        
-                
 
 class activity_line_line(models.Model):
     _inherit = "activity.line.line"
-    _descrtiption = "Employee Activity Module"
+    _description = "Employee Activity Module"
     _inherits = {
                  'project.tracker': 'tracker_line_id'
     }
@@ -50,6 +49,7 @@ class activity_line_line(models.Model):
             self.earned_amount = self.line_id.cost / float(total_activity_line_line)
         else:
             self.earned_amount = 0
+   
     @api.one
     @api.depends(
                 'employee_activity_line.employee_id.emp_type',

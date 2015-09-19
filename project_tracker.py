@@ -6,11 +6,8 @@ class project_tracker(osv.osv):
     _name = 'project.tracker'
     
     def create(self,cr,uid,vals,context=None):
-        print "vals====================",vals
         if vals.get('IPR_no','/')=='/':
             vals['IPR_no']=self.pool.get('ir.sequence').get(cr,uid,'Project.Tracker.IPR.No',context=None) or '/'
-            print "valssssssssssssssss----------",vals
-        print "in sequnece====================================================",vals
         return super(project_tracker,self).create(cr,uid,vals,context=None)
     
     def _get_employees_id(self,cr,uid,ids,name,args,context=None):

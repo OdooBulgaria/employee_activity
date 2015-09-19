@@ -38,6 +38,7 @@ openerp.employee_activity = function(instance, local) {
                 }));
                 self.defs.push(mod.call("list_circle", []).then(function(result) {
                 	self.circle = result;
+                	console.log("===========================1",result)
                 	self.circle_d.resolve()
                 }));                
                 return $.when(self.defs)
@@ -64,7 +65,8 @@ openerp.employee_activity = function(instance, local) {
                     self.$el.parent().find('select#project_id')[0].value = self.current_project;
                 }                        	
                 if (self.circle){
-                    for (var i = 0;i < self.circle.length;i++){
+                    console.log("================================2",self.circle);
+                	for (var i = 0;i < self.circle.length;i++){
                     	self.circle_list_sorted.push(self.circle[i][0]);
                     	o = new Option(self.circle[i][1], self.circle[i][0]);
                         self.$el.parent().find('select#circle_id').append(o);
@@ -101,10 +103,6 @@ openerp.employee_activity = function(instance, local) {
         },            	
     });    
 
-    
-    
-    
-    
     // Activity Dashboard
     instance.web.views.add('tree_activity_dashboard', 'instance.web.pls.filter_view_activities');
     instance.web.pls.filter_view_activities = instance.web.ListView.extend({

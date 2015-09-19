@@ -10,7 +10,6 @@ class employee_activity(models.Model):
     _description = "Employee Activity Line"
     
     def run_cron_employee_activity_line(self,cr,uid,ids=None,context=None):
-        print "============================================run_cron start 24 48"
         current_timedate = datetime.now()
         mail_obj=self.pool.get('mail.mail')
         send_mail=[]
@@ -65,7 +64,6 @@ class employee_activity(models.Model):
                     send_mail.append(mail_id)
                     self.write(cr,uid,i,{'is_mail_sent_24':True},context)
         mail_obj.send(cr, uid, send_mail, auto_commit=False, raise_exception=False, context=None)
-        print "============================================run_cron stop 24 48"
         return True
     
     def _check_work_description(self,cr,uid,ids,context=None):

@@ -2,6 +2,6 @@ id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_employee_activity_line_manager,employee.activity.line,model_employee_activity_line,pls.telecom_project_manager,1,1,1,0
 access_employee_activity_line_cicle_head,employee.activity.line,model_employee_activity_line,pls.telecom_circle_head,1,1,1,0
 access_employee_activity_line_corporate,employee.activity.line,model_employee_activity_line,pls.telecom_corporate,1,1,1,1
-access_project_tracker_project_manager,project.tracker,model_project_tracker,pls.telecom_project_manager,1,0,0,0
-access_project_tracker_circle_head,project.tracker,model_project_tracker,pls.telecom_circle_head,1,0,0,0
+access_project_tracker_project_manager,project.tracker,model_project_tracker,pls.telecom_project_manager,1,1,1,0
+access_project_tracker_circle_head,project.tracker,model_project_tracker,pls.telecom_circle_head,1,1,1,0
 access_project_tracker_corporate,project.tracker,model_project_tracker,pls.telecom_corporate,1,1,1,1
