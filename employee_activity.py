@@ -150,7 +150,6 @@ class employee_activity(models.Model):
         return res
     
     def create(self,cr,uid,vals,context=None):
-        print "===========================vals",vals
         vals['name'] = self.pool.get('ir.sequence').get(cr, uid, 'employee.activity.line') or '/'
         if not vals.get('date',False):
             vals.update({'date':datetime.now(timezone('Asia/Kolkata'))})

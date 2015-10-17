@@ -38,7 +38,6 @@ openerp.employee_activity = function(instance, local) {
                 }));
                 self.defs.push(mod.call("list_circle", []).then(function(result) {
                 	self.circle = result;
-                	console.log("===========================1",result)
                 	self.circle_d.resolve()
                 }));                
                 return $.when(self.defs)

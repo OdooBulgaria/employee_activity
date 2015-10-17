@@ -88,15 +88,19 @@ class activity_line_line(models.Model):
     def create(self,cr,uid,vals,context=None):
         line_item_id=vals.get('line_id',False)
         activity_line_obj=self.pool.get('activity.line').browse(cr,uid,line_item_id,context)
+        if not vals.get('IPR_no',False) or vals.get('IPR_no',False) == '/':
+            sequence = self.pool.get('ir.sequence').get(cr,uid,'Project.Tracker.IPR.No',context=None) or '/'
+            vals.update({
+                         'IPR_no':sequence
+                         })        
         tracker_id=self.pool.get('project.tracker').create(cr,uid,{
               'work_description_id':activity_line_obj.activity_line.description_id.id,
               'site_id': vals.get('site_id',False),
               'site_name':vals.get('site_id',False) and self.pool.get('project.site').browse(cr,uid,vals.get('site_id'),context) or False,
               'po_status':False,
               'activity_planned':vals.get('line_id'),
-              'per_unit_Price':0.0,
-              'advance_paid_to_vendor':0.0,
               'done_by':False,
+              'IPR_no':vals.get('IPR_no','/'),
               'activity_start_date':False,
               'activity_end_date':False,
               'wcc_sign_off_status':False,
