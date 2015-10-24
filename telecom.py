@@ -34,15 +34,6 @@ class activity_line_line(models.Model):
         self.bill_amount = bill_amount
     
     @api.one
-    @api.depends()
-    def _get_amount_earned(self):
-        total_activity_line_line = len(self.line_id.activity_line_line)
-        if total_activity_line_line > 0:
-            self.earned_amount = self.line_id.cost / float(total_activity_line_line)
-        else:
-            self.earned_amount = 0
-   
-    @api.one
     @api.depends(
                 'employee_activity_line.employee_id.emp_type',
                 'cost',
@@ -107,8 +98,8 @@ class activity_line_line(models.Model):
 
 #     earned = fields.Float(compute = _get_total_earned,string = "Earning")
     employee_activity_line = fields.One2many('employee.activity.line','activity_line',"Activities")
-    total_cost = fields.Float(compute = _compute_total_cost,string = "Total Expenses")
+    total_cost = fields.Float(compute = _compute_total_cost,string = "Input Cost (Net Expense)")
     tracker_line_id = fields.Many2one('project.tracker',string='Tracker Line',ondelete="cascade",required=True,select=True)
-    earned_amount = fields.Float(compute = "_get_amount_earned",string = "Earnings")
-    bill_percent = fields.Float('Percent Billed')
+    earned_amount = fields.Float(string = "PLS Billing Amount")
+    bill_percent = fields.Float('Billing/Invoicing Status (%)')
     bill_amount= fields.Float('Billed Amount')

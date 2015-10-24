@@ -1,7 +1,7 @@
 <openerp>
 	<data>
 		<record id = "action_employee_activity_line_dashboard" model="ir.actions.act_window">
-            <field name="name">Activities</field>
+            <field name="name">Activity Dashboard</field>
             <field name="res_model">employee.activity.line</field>
             <field name = "context">{}</field>
             <field name="view_type">form</field>
@@ -28,11 +28,12 @@
 					<field name = "type" invisible="1" />
 					<field name = "per_unit_price" groups = "pls.telecom_corporate" />
 					<field name = "cost" sum="total" groups = "pls.telecom_corporate" />
-					<field name = "vendor_id" attrs = "{'invisible':[('type','!=','vendor')]}" />
 					<field name = "advance_paid_to_vendor" readonly = "0" sum="total" groups = "pls.telecom_corporate" />
 					<field name = "balance_payment" sum="total" readonly="1" groups = "pls.telecom_corporate" />
-					<field name = "earned_amount" sum="total" groups = "pls.telecom_corporate" />
+					<field name = "vendor_payment_remark" groups = "pls.telecom_corporate" />
 					<field name = "total_cost" sum="total" readonly="1" groups = "pls.telecom_corporate"/>
+					<field name = "earned_amount" sum="total" groups = "pls.telecom_corporate" />
+					<field name = "vendor_id" attrs = "{'invisible':[('type','!=','vendor')]}" />
 					<field name = "done_by" widget = "many2many_tags" readonly="1"/>
 					<field name = "activity_start_date" />
 					<field name = "activity_end_date" />
@@ -41,11 +42,12 @@
 					<field name = "quality_document_uploaded_on_P6" />
 					<field name = "quality_document_uploaded_date" />
 					<field name = "cql_aproval_date" />
-					<field name = "cpm_aproval_date" />
 					<field name = "im_approval_date" />
+					<field name = "cpm_aproval_date" />
 					<field name = "pd_approval_date" />
-					<field name= "bill_percent"  />
-					<field name = "bill_amount" />
+					<field name= "bill_percent" groups = "pls.telecom_corporate"  />
+					<field name = "bill_amount" sum="total" groups = "pls.telecom_corporate"/>
+					<field name = "invoice_date" groups = "pls.telecom_corporate"/>
  				</tree>            
             </field>
 		</record> 

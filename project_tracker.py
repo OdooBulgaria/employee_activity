@@ -37,7 +37,7 @@ class project_tracker(osv.osv):
                                                                     ('Not Available','Not Available'),
                                                                     ]),
               'activity_planned':fields.many2one('activity.line',string='Activity Planned',ondelete="cascade",required=True,select=True),
-              'per_unit_price':fields.function(_compute_unit_price,type="float",string='Per unit Price'),
+              'per_unit_price':fields.function(_compute_unit_price,type="float",string='PLS Per unit Price'),
               'done_by':fields.function(_get_employees_id,string = "Done By",type="many2many",relation="hr.employee"),
               'activity_start_date':fields.datetime(string='Activity Start Date'),
               'activity_end_date':fields.datetime(string='Activity End Date'),
@@ -49,6 +49,8 @@ class project_tracker(osv.osv):
               'cpm_aproval_date':fields.date(string="CPM Approval Date"),
               'im_approval_date':fields.date(string='IM Approval Date',selection=[('yes','Yes'),('no','No')]),
               'pd_approval_date':fields.date('PD Approval Date'),
+              'invoice_date':fields.date('Invoice Date'),
+              'vendor_payment_remark':fields.text('Vendor Payment Remark')
               }
     _defaults = {
                 'IPR_no':'/',
