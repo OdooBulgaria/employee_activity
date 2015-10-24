@@ -20,19 +20,6 @@ class telecom_project(models.Model):
                 result.append((project.id,ng[project.id]))
         return result
     
-    def list_circle(self,cr,uid,context=None):
-        result = []
-#         corporate_ids = self.pool.get("attendance.attendance")._get_user_ids_group(cr,uid,"pls","telecom_corporate")
-#         if uid not in corporate_ids:
-#             return result
-        list_ids = self.pool.get("telecom.circle").search(cr,uid,[], offset=0, limit=None, order=None, context=None, count=False)
-        ng = dict(self.pool.get('telecom.circle').name_search(cr,uid,'',[('id','in',list_ids)]))            
-        if ng:
-            ids = ng.keys()
-            for circle in self.pool.get('telecom.circle').browse(cr, uid, ids, context=context):
-                result.append((circle.id,ng[circle.id]))
-        return result        
-
 class activity_line_line(models.Model):
     _inherit = "activity.line.line"
     _description = "Employee Activity Module"
@@ -40,6 +27,11 @@ class activity_line_line(models.Model):
                  'project.tracker': 'tracker_line_id'
     }
 
+    @api.one
+    @api.onchange('bill_percent')
+    def onchange_bill_percent(self):
+        bill_amount = (self.bill_percent/100)*self.per_unit_price
+        self.bill_amount = bill_amount
     
     @api.one
     @api.depends()
@@ -62,9 +54,9 @@ class activity_line_line(models.Model):
                  )
     def _compute_total_cost(self):
         total_cost = 0
-        for id in self.employee_activity_line:
+        for id in self.sudo().employee_activity_line:
             total_cost = total_cost + id.total_cost
-        self.total_cost = round(total_cost,3)
+        self.sudo().total_cost = round(total_cost,3)
          
     def name_get(self,cr,uid,ids,context=None):
         res = []
@@ -118,3 +110,5 @@ class activity_line_line(models.Model):
     total_cost = fields.Float(compute = _compute_total_cost,string = "Total Expenses")
     tracker_line_id = fields.Many2one('project.tracker',string='Tracker Line',ondelete="cascade",required=True,select=True)
     earned_amount = fields.Float(compute = "_get_amount_earned",string = "Earnings")
+    bill_percent = fields.Float('Percent Billed')
+    bill_amount= fields.Float('Billed Amount')

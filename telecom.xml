@@ -66,7 +66,9 @@
 								</group>								
 								<group>
 									<group>
-										<field name = "cql_approval_status" />
+										<field name = "cql_aproval_date" />
+										<field name = "cpm_aproval_date" />
+										<field name = "im_approval_date" />
 									</group>
 									<group>
 										<field name = "po_status" />

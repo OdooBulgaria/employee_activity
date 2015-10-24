@@ -2,7 +2,7 @@
 <openerp>
 	<data>
 		<record model="ir.actions.report.xml" id="aeroo_project_tracker_report_ods">
-			<field name="name">Project Tracker Report</field>
+			<field name="name">Export Project Tracker</field>
 			<field name="model">activity.line.line</field>
 			<field name="report_name">project_tracker_report_aeroo</field>
 			<field name="tml_source">file</field>

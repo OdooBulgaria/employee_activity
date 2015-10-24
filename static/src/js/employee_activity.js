@@ -64,7 +64,6 @@ openerp.employee_activity = function(instance, local) {
                     self.$el.parent().find('select#project_id')[0].value = self.current_project;
                 }                        	
                 if (self.circle){
-                    console.log("================================2",self.circle);
                 	for (var i = 0;i < self.circle.length;i++){
                     	self.circle_list_sorted.push(self.circle[i][0]);
                     	o = new Option(self.circle[i][1], self.circle[i][0]);
@@ -146,6 +145,9 @@ openerp.employee_activity = function(instance, local) {
             	self.$el.parent().find("div.oe_account_quickadd.ui-toolbar").remove();
             	self.render_element = 	$(QWeb.render("activity_dashboard", {info: self.info}))
             	$.when(self.$el.parent().prepend(self.render_element)).then(function(){
+            			self.render_element.find('button.more_options').bind('click',function(){
+	                		self.render_element.find('.oe_toggle').toggleClass("oe_display_none")
+	                	})
             			//onchange project,circle,employee
             			self.$el.parent().find('select.clear_group,select.oe_select_selection').change(function() {
                         		self[$(this)[0].id] = this.value === '' ? null : parseInt(this.value) || this.value
@@ -190,7 +192,8 @@ openerp.employee_activity = function(instance, local) {
 	    	                    }            	
 	    	                    self.$el.parent().find('.oe_select_employee_name')[0].value = self.employee_id;
 	    	                }	    	                	    	                
-	    	            });            			
+	    	                self.search_employee_activity_lines();
+            			});            			
             		});
     		},
 
@@ -217,7 +220,7 @@ openerp.employee_activity = function(instance, local) {
             }
             if (self.state !== null ) domain.push(['state','=',self.state]);
             else{
-            	domain.push(['state','in',['completed','uncompleted','wip','unattempted']])
+            	domain.push(['state','in',['completed','uncompleted','wip','unattempted','draft',false]])
             }
             domain.push(['date','>=',self.date_from || today_date ]);
         	domain.push(['date','<=',self.date_to || today_date ]);

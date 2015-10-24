@@ -1,6 +1,6 @@
 <openerp>
 	<data>
-	   <menuitem id =  "menu_action_plan_parent"  name = "Activity Management"  groups = "pls.telecom_corporate,pls.telecom_circle_head,pls.telecom_project_manager" />
+	   <menuitem id =  "menu_action_plan_parent"  name = "Daily Activity Plan &amp; Closure Report"  groups = "pls.telecom_corporate,pls.telecom_circle_head,pls.telecom_project_manager" />
 		<!-- Registering the javascript -->
         <template id="assets_backend" name="employee_activity_assets" inherit_id="web.assets_backend">
             <xpath expr="." position="inside">
@@ -15,9 +15,6 @@
             <field name="tag">local.action_plan</field>
         </record> 
         
-       	<menuitem id = "menu_action_plan_childs" name = "Action Plan" parent = "menu_action_plan_parent" sequence="1" />
-      	<menuitem id = "menu_action_plan_subchild" name = "Action Plan" parent = "menu_action_plan_childs" action = "action_plan_javascript" />
-      	
       	<!-- Employee Activity Lines view only by corporate ids -->
 		<record id = "view_employee_activity_corporate_tree" model="ir.ui.view">
 			<field name = "name">Employee Activity</field>
@@ -29,7 +26,7 @@
             		<field name = "id" invisible="1"/>
             		<field name = "date" />
             		<field name = "name" />
-            		<field name = "employee_id" on_change="onchange_employee_id(employee_id)" />
+            		<field name = "employee_id"  />
             		<field name = "project_id" />
             		<field name = "circle_id" readonly="1" />
             		<field name = "state" />
@@ -44,7 +41,6 @@
 					<field name = "activity_line" domain = "[('site_id','=',site_id),('type','=',emp_type),('work_description','=',description_id)]" widget="selection"/>
 					<field name = "IPR_no" />
 					<field name = "multiple_employees" widget = "many2many_tags" attrs="{'readonly':[('id','!=',False)]}" domain="[('emp_type','=',emp_type),('id','!=',employee_id)]"/>
-					<field name = "remarks" />
 					<field name = "reporting_time_site" />
 					<field name = "return_time_site" />
 					<field name = "distance_site_location"  />
@@ -55,8 +51,12 @@
 					<field name = "local_conveyance" sum="total" />
 					<field name = "local_conveyance_approved" sum="total" />
 					<field name = "lodging" sum="total" />
-					<field name = "lodging_approved" sum="total" />		
-					<field name = "total_cost" sum="total" />				
+					<field name = "lodging_approved" sum="total" />	
+					<field name = "misc_applied" sum="total"/>
+					<field name = "misc_approved" sum="total" />	
+					<field name = "per_day_salary_employee" />
+					<field name = "total_cost" sum="total" />
+					<field name = "remarks" />				
             	</tree>
             </field>
         </record>      	
@@ -75,7 +75,7 @@
                         <div class="oe_title oe_left">
                             <label for="employee_id" class="oe_edit_only" />
                             <h1>
-								<field name = "employee_id" on_change="onchange_employee_id(employee_id)" />
+								<field name = "employee_id" />
                             </h1>
                             <label for="job_id" class="oe_edit_only" />
 							<field name = "job_id" readonly="1"/>
@@ -136,12 +136,15 @@
 												<field name = "travelling_allowance" />
 												<field name = "local_conveyance" />
 												<field name = "lodging" />
+												<field name = "misc_applied" />
 											</group>
 											<group>
 												<field name = "daily_allowance_approved" />
 												<field name = "travelling_allowance_approved" />
 												<field name = "local_conveyance_approved" />
-												<field name = "lodging_approved" />										
+												<field name = "lodging_approved" />
+												<field name = "misc_approved" />
+												<field name = "per_day_salary_employee" /> 										
 											</group>
 										</group>
 									</page>									
@@ -155,15 +158,15 @@
 
 		<!-- This is for the Action Plan Menutiem -->		
 		<record id = "action_employee_activity_line" model="ir.actions.act_window">
-            <field name="name">Employee Activities</field>
+            <field name="name">DAP &amp; closure Report</field>
             <field name="type">ir.actions.act_window</field>
             <field name="res_model">employee.activity.line</field>
             <field name="view_type">form</field>
             <field name="view_mode">tree,form</field>
 		</record>
-      	<menuitem id = "menu_employee_activity_childs" name = "Employee Activities" parent = "menu_action_plan_parent" sequence="0" groups = "pls.telecom_corporate"/>
-      	<menuitem id = "menu_employee_activity_subchilds" name = "Employee Activities" parent = "menu_employee_activity_childs" action = "action_employee_activity_line" />
-      	
+      	<menuitem id = "menu_employee_activity_childs" name = "Daily Activity Plan &amp; closure Report" parent = "menu_action_plan_parent" sequence="0" groups = "pls.telecom_corporate"/>
+      	<menuitem id = "menu_employee_activity_subchilds" sequence="1"  parent = "menu_employee_activity_childs" action = "action_employee_activity_line" />
+   	    <menuitem id = "menu_action_plan_subchild" sequence="2" name = "Plan &amp; Close" parent = "menu_employee_activity_childs" action = "action_plan_javascript" />
       	<record id="action_employee_activity_line_past_24hr" model="ir.actions.act_window">
             <field name="name">24 Hours </field>
             <field name="type">ir.actions.act_window</field>

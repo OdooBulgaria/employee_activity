@@ -89,14 +89,6 @@ class employee_activity(models.Model):
         (_check_activity_line_site_id, 'This Activity line is not available for the selected site ID', ['activity_line']),
     ]
      
-    def onchange_employee_id(self,cr,uid,ids,employee_id,context=None):
-        return {
-                'value':{
-                         'activity_line':False,
-                         'multiple_employees':[(5,False,False)],
-                         },
-                }
-    
     def open_form_activity(self,cr,uid,id,context=None):
         dummy, view_id = self.pool.get('ir.model.data').get_object_reference(cr, uid, 'employee_activity', 'view_employee_activity_corporate')
         return {
@@ -227,6 +219,11 @@ class employee_activity(models.Model):
         return res
     
     @api.one
+    @api.onchange('employee_id')
+    def onchange_employee_id(self):
+        self.per_day_salary_employee = self.employee_id.cost_to_company_day
+        
+    @api.one
     @api.onchange('project_id')
     def onchange_project_id(self):
         self.activity_line = False
@@ -238,16 +235,17 @@ class employee_activity(models.Model):
         'travelling_allowance_approved',
         'daily_allowance_approved',
         'lodging_approved',
+        'employee_id',
         'employee_id.emp_type',
         'activity_line.cost',
         'activity_line.type'
     )
     def _get_total_cost(self):
-        total_cost = self.local_conveyance_approved + self.travelling_allowance_approved + self.daily_allowance_approved + self.lodging_approved
+        total_cost = self.misc_approved + self.local_conveyance_approved + self.travelling_allowance_approved + self.daily_allowance_approved + self.lodging_approved
         if self.employee_id.emp_type == "inhouse":
             self.total_cost = round(total_cost,3)
         elif self.employee_id.emp_type == "vendor":
-            self.total_cost = self.activity_line.cost + total_cost 
+            self.total_cost = round((self.activity_line.cost + self.misc_approved),3) 
     
     name = fields.Char("Sequence",readonly="1")
     IPR_no = fields.Char(string='IPR No.',store=True,related='activity_line.tracker_line_id.IPR_no',relation='project.tracker')
@@ -262,7 +260,7 @@ class employee_activity(models.Model):
     site_code = fields.Char(related = "site_id.site_id",string="Site ID",readonly=True)
     work_description = fields.Many2one('project.description.line')
     description_id = fields.Many2one(relation="work.description",related="work_description.description_id",string = "Description Line Item",store=True,invisible=True)# Just for the purpose of domains
-    activity_line = fields.Many2one('activity.line.line',required=True)
+    activity_line = fields.Many2one('activity.line.line',required=True,string="Activity Planned")
     state = fields.Selection([('draft','Draft'),
                               ('completed','Completed'),
                               ('uncompleted','Not Completed'),
@@ -273,18 +271,21 @@ class employee_activity(models.Model):
     reporting_time_site = fields.Datetime('Reporting Time on Site')
     return_time_site = fields.Datetime('Returning Time from Site')
     distance_site_location = fields.Float("Distance Between Site & Location")
-    local_conveyance = fields.Float('Local Conveyance (LC)')
-    travelling_allowance = fields.Float("Traveling Allowance Applied (TA)")
-    daily_allowance = fields.Float("Daily Allowance (DA)")
-    lodging = fields.Float('Lodging')
-    multiple_employees = fields.Many2many('hr.employee','ativity_line_hr_employee_rel','line_id','employee_id','Replicate Activity')
+    local_conveyance = fields.Float('LC Applied')
+    travelling_allowance = fields.Float("TA Applied")
+    daily_allowance = fields.Float("DA Applied")
+    lodging = fields.Float('Lodging Applied')
+    misc_applied = fields.Float('Miscellaneous Applied')
+    multiple_employees = fields.Many2many('hr.employee','ativity_line_hr_employee_rel','line_id','employee_id','Add More Employees')
     date = fields.Datetime("Date",default = datetime.now(),required=True)
     total_cost = fields.Float(compute="_get_total_cost",string = "Total Cost")
     circle_id = fields.Many2one(relation = 'telecom.circle',related = "project_id.circle",string = "Circle",store = True)
-    local_conveyance_approved = fields.Float('Local Conveyance (LC) Approved')
-    travelling_allowance_approved = fields.Float("Travelling Allowance Approved")
-    daily_allowance_approved = fields.Float("Daily Allowance Approved")
+    local_conveyance_approved = fields.Float('LC Approved')
+    travelling_allowance_approved = fields.Float("TA Approved")
+    daily_allowance_approved = fields.Float("DA Approved")
     lodging_approved = fields.Float("Lodging Approved")
+    misc_approved = fields.Float('Miscellaneous Approved')
+    per_day_salary_employee = fields.Float('Employee Salary Per Day')
     is_mail_sent_24 = fields.Boolean("Is mail sent",default = False)
     is_mail_sent_48 = fields.Boolean("Is mail sent",default = False)
     

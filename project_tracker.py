@@ -8,6 +8,15 @@ class project_tracker(osv.osv):
     def unlink(self,cr,uid,ids,context=None):
         return True
     
+    def _compute_unit_price(self,cr,uid,ids,name,args,context=None):
+        uid = SUPERUSER_ID
+        res = {}
+        for record in self.browse(cr,uid,ids,context):
+            res.update({
+                        record.id:record.activity_planned.cost
+                        })
+        return res
+    
     def _get_employees_id(self,cr,uid,ids,name,args,context=None):
         uid = SUPERUSER_ID
         res = {x:[] for x in ids}
@@ -28,7 +37,7 @@ class project_tracker(osv.osv):
                                                                     ('Not Available','Not Available'),
                                                                     ]),
               'activity_planned':fields.many2one('activity.line',string='Activity Planned',ondelete="cascade",required=True,select=True),
-              'per_unit_price':fields.float(string='Per unit Price'),
+              'per_unit_price':fields.function(_compute_unit_price,type="float",string='Per unit Price'),
               'done_by':fields.function(_get_employees_id,string = "Done By",type="many2many",relation="hr.employee"),
               'activity_start_date':fields.datetime(string='Activity Start Date'),
               'activity_end_date':fields.datetime(string='Activity End Date'),
@@ -36,8 +45,10 @@ class project_tracker(osv.osv):
               'wcc_sign_off_date':fields.datetime(string='WCC Sign off Date'),
               'quality_document_uploaded_on_P6':fields.selection(string='Quality Document uploaded on P6',selection=[('Yes','Yes'),('No','No')]),
               'quality_document_uploaded_date':fields.datetime(string='Quality Document Uploaded date'),
-              'cql_approval_status':fields.selection(string='IM Approval Status',selection=[('yes','Yes'),('no','No')]),
-              'pd_approval_status':fields.selection(string='PD Approval Status',selection=[('yes','Yes'),('no','No')]),
+              'cql_aproval_date':fields.date(string="CQL Approval Date"),
+              'cpm_aproval_date':fields.date(string="CPM Approval Date"),
+              'im_approval_date':fields.date(string='IM Approval Date',selection=[('yes','Yes'),('no','No')]),
+              'pd_approval_date':fields.date('PD Approval Date'),
               }
     _defaults = {
                 'IPR_no':'/',

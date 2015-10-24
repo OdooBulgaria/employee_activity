@@ -42,6 +42,6 @@
             <field name="view_mode">form</field>
             <field name = "target">new</field>
          </record>		
-		<menuitem id = "subchild_menu_employee_dashboard_report" name = "Activity Closure Report" sequence="2" parent = "pls.child_menu_dashboard" action = "action_activity_report_dashboard" />         
+		<menuitem id = "subchild_menu_employee_dashboard_report" name = "Export Activity Report" sequence="20" parent = "menu_employee_activity_childs" action = "action_activity_report_dashboard" />         
 	</data>
 </openerp>

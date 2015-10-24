@@ -1,7 +1,7 @@
 <openerp>
 	<data>
 		<record id = "action_employee_activity_line_dashboard" model="ir.actions.act_window">
-            <field name="name">Activity Dashboard</field>
+            <field name="name">Activities</field>
             <field name="res_model">employee.activity.line</field>
             <field name = "context">{}</field>
             <field name="view_type">form</field>
@@ -16,7 +16,7 @@
             <field name="model">activity.line.line</field>
             <field name = "priority">100</field>
             <field name="arch" type="xml">
-				<tree string = "Project Tracker" editable = "top" create="false" edit="true" class="myclass_for_project_tracker_tree_view" >
+				<tree string = "Project Tracker" editable = "top"  class="myclass_for_project_tracker_tree_view" >
 					<field name = "project_id" readonly = "1"/>
 					<field name = "work_description" readonly="1"/>
 					<field name = "IPR_no" />
@@ -25,24 +25,28 @@
 					<field name = "site_id" />
 					<field name = "po_status" />
 					<field name = "line_id" />
-					<field name = "cost" sum="total" groups = "pls.telecom_corporate" />
+					<field name = "type" invisible="1" />
 					<field name = "per_unit_price" groups = "pls.telecom_corporate" />
-					<field name = "type" />
+					<field name = "cost" sum="total" groups = "pls.telecom_corporate" />
 					<field name = "vendor_id" attrs = "{'invisible':[('type','!=','vendor')]}" />
-					<field name = "advance_paid_to_vendor" sum="total" groups = "pls.telecom_corporate" />
-					<field name = "balance_payment" sum="total" readonly="0" groups = "pls.telecom_corporate" />
+					<field name = "advance_paid_to_vendor" readonly = "0" sum="total" groups = "pls.telecom_corporate" />
+					<field name = "balance_payment" sum="total" readonly="1" groups = "pls.telecom_corporate" />
 					<field name = "earned_amount" sum="total" groups = "pls.telecom_corporate" />
-					<field name = "total_cost" sum="total" readonly="0" groups = "pls.telecom_corporate"/>
-					<field name = "done_by" widget = "many2many_tags" readonly="0"/>
+					<field name = "total_cost" sum="total" readonly="1" groups = "pls.telecom_corporate"/>
+					<field name = "done_by" widget = "many2many_tags" readonly="1"/>
 					<field name = "activity_start_date" />
 					<field name = "activity_end_date" />
 					<field name = "wcc_sign_off_status" />
 					<field name = "wcc_sign_off_date" />
 					<field name = "quality_document_uploaded_on_P6" />
 					<field name = "quality_document_uploaded_date" />
-					<field name = "cql_approval_status" />
-					<field name = "pd_approval_status" />
-				</tree>            
+					<field name = "cql_aproval_date" />
+					<field name = "cpm_aproval_date" />
+					<field name = "im_approval_date" />
+					<field name = "pd_approval_date" />
+					<field name= "bill_percent"  />
+					<field name = "bill_amount" />
+ 				</tree>            
             </field>
 		</record> 
 		
