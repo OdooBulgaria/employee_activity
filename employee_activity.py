@@ -200,7 +200,7 @@ class employee_activity(models.Model):
             for i in employee:
                 activity_ids = self.search(cr,SUPERUSER_ID,[
                                                             ('employee_id','=',i.employee_id.id),
-                                                            ('state','in',['uncompleted','wip','unattempted']),
+                                                            ('state','in',['uncompleted','wip','unattempted','draft',False]),
                                                             ],offset=0, limit=None, order=None, context=None, count=False)
                 activity_info = self.read(cr,SUPERUSER_ID,activity_ids,[],context)
                 res.update({
